@@ -26,7 +26,8 @@ Essa API tem como objetivo gerenciar prescrições médicas de forma eficiente. 
 Clone o repositório:
 
 ```bash
-git clone https://github.com/seu-usuario/sua-api-de-prescricoes.git
+git clone https://github.com/izaiasmorais/prescriptions-api
+cd prescriptions-api
 ```
 
 Instale as dependências:
