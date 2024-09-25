@@ -27,6 +27,7 @@ Clone o repositório:
 
 ```bash
 git clone https://github.com/izaiasmorais/prescriptions-api
+cd prescriptions-api
 ```
 
 Instale as dependências:
