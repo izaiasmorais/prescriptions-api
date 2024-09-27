@@ -15,12 +15,8 @@ Uma api que gerencia prescrições de um médico/profissional de forma completa,
 
 | Método | Endpoint                | Descrição                                           |
 |--------|-------------------------|-----------------------------------------------------|
-| POST   | `/users/sign-up`        | Registrar um novo usuário                           |
-| POST   | `/users/sign-in`        | Fazer login e obter o token de autenticação         |
-| GET    | `/prescriptions`        | Listar todas as prescrições do usuário autenticado  |
-| POST   | `/prescriptions`        | Criar uma nova prescrição                           |
-| PUT    | `/prescriptions/:id`    | Atualizar uma prescrição existente                  |
-| DELETE | `/prescriptions/:id`    | Deletar uma prescrição                              |
+| POST   | `/auth/sign-up`         | Registrar um novo usuário                           |
+| POST   | `/auth/sign-in`         | Fazer login e obter o token de autenticação         |
 
 ## Instalação
 Clone o repositório:
