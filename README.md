@@ -1,28 +1,28 @@
 # API de Gerenciamento de Prescrições
 
-### Introdução
+## Introdução
 Uma api que gerencia prescrições de um médico/profissional de forma completa, com sistema de filtro, paginação e métricas.
 
-### Tecnologias
-- Linguagem: Node.js
-- Framework: Fastify.js
-- Banco de Dados: PostgreSQL
-- Autenticação: JWT
-- ORM: PrismaORM
-- Gerenciamento de Dependências: pnpm
+## Tecnologias
+- Linguagem: [Node.js](https://nodejs.org)
+- Framework: [Fastify.js](https://www.fastify.io)
+- Banco de Dados: [PostgreSQL](https://www.postgresql.org)
+- Autenticação: [JWT](https://jwt.io)
+- ORM: [PrismaORM](https://www.prisma.io)
+- Gerenciamento de Dependências: [pnpm](https://pnpm.io)
 
-### Endpoints
+## Endpoints
 
-| Método | Endpoint               | Descrição                                           |
-|--------|------------------------|-----------------------------------------------------|
-| POST   | `/users/register`       | Registrar um novo usuário                           |
-| POST   | `/users/login`          | Fazer login e obter o token de autenticação         |
+| Método | Endpoint                | Descrição                                           |
+|--------|-------------------------|-----------------------------------------------------|
+| POST   | `/users/sign-up`        | Registrar um novo usuário                           |
+| POST   | `/users/sign-in`        | Fazer login e obter o token de autenticação         |
 | GET    | `/prescriptions`        | Listar todas as prescrições do usuário autenticado  |
 | POST   | `/prescriptions`        | Criar uma nova prescrição                           |
 | PUT    | `/prescriptions/:id`    | Atualizar uma prescrição existente                  |
 | DELETE | `/prescriptions/:id`    | Deletar uma prescrição                              |
 
-### Instalação
+## Instalação
 Clone o repositório:
 
 ```bash
@@ -42,7 +42,7 @@ Configure o arquivo .env com suas credenciais:
 DATABASE_ULR=""
 ```
 
-### Executando o Projeto
+## Executando o Projeto
 Inicie o servidor:
 
 ```bash
