@@ -9,6 +9,7 @@ import {
 	validatorCompiler,
 	ZodTypeProvider,
 } from "fastify-type-provider-zod";
+import { signUp } from "./http/routes/sign-up";
 
 const port = process.env.PORT || 3333;
 
@@ -37,6 +38,8 @@ app.get("/", async () => {
 });
 
 app.register(getUsers);
+
+app.register(signUp);
 
 const start = async () => {
 	try {
