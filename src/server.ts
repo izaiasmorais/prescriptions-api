@@ -2,6 +2,7 @@ import fastify from "fastify";
 import { getUsers } from "./http/routes/get-users";
 import fastifyCors from "@fastify/cors";
 import fastifySwagger from "@fastify/swagger";
+import fastifyJwt from "@fastify/jwt";
 import fastifySwaggerUI from "@fastify/swagger-ui";
 import {
 	jsonSchemaTransform,
@@ -10,6 +11,9 @@ import {
 	ZodTypeProvider,
 } from "fastify-type-provider-zod";
 import { signUp } from "./http/routes/sign-up";
+import { deleteUser } from "./http/routes/delete-user";
+import { env } from "./env";
+import { signIn } from "./http/routes/sign-in";
 
 const port = process.env.PORT || 3333;
 
@@ -32,14 +36,19 @@ app.register(fastifySwagger, {
 app.register(fastifySwaggerUI, {
 	routePrefix: "/docs",
 });
+app.register(fastifyJwt, {
+	secret: env.JWT_SECRET,
+});
 
 app.get("/", async () => {
 	return { message: "Hello World" };
 });
 
+// auth
 app.register(getUsers);
-
+app.register(deleteUser);
 app.register(signUp);
+app.register(signIn);
 
 const start = async () => {
 	try {

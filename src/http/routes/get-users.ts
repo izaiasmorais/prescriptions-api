@@ -8,7 +8,7 @@ export async function getUsers(app: FastifyInstance) {
 		"/users",
 		{
 			schema: {
-				tags: ["users"],
+				tags: ["auth"],
 				summary: "Get all users",
 				response: {
 					200: z.array(
