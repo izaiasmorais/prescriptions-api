@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -17,4 +14,18 @@ model User {
   password String
 
   @@map("users")
+}
+
+model Prescription {
+  id           String   @id @default(uuid())
+  medicalRecord String
+  name          String
+  medicine      String
+  unit          String
+  dose          Float
+  via           String
+  posology      String
+  posologyDays  String[]
+
+  @@map("prescriptions")
 }

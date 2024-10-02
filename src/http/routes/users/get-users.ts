@@ -1,6 +1,7 @@
-import { prisma } from "../../lib/prisma";
+
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
+import { prisma } from "../../../lib/prisma";
 import z from "zod";
 
 export async function getUsers(app: FastifyInstance) {
@@ -8,7 +9,7 @@ export async function getUsers(app: FastifyInstance) {
 		"/users",
 		{
 			schema: {
-				tags: ["auth"],
+				tags: ["users"],
 				summary: "Get all users",
 				response: {
 					200: z.array(

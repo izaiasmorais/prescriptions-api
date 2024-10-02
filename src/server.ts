@@ -1,5 +1,4 @@
 import fastify from "fastify";
-import { getUsers } from "./http/routes/get-users";
 import fastifyCors from "@fastify/cors";
 import fastifySwagger from "@fastify/swagger";
 import fastifyJwt from "@fastify/jwt";
@@ -10,10 +9,13 @@ import {
 	validatorCompiler,
 	ZodTypeProvider,
 } from "fastify-type-provider-zod";
-import { signUp } from "./http/routes/sign-up";
-import { deleteUser } from "./http/routes/delete-user";
 import { env } from "./env";
-import { signIn } from "./http/routes/sign-in";
+import { signUp } from "./http/routes/auth/sign-up";
+import { signIn } from "./http/routes/auth/sign-in";
+import { deleteUser } from "./http/routes/users/delete-user";
+import { getUsers } from "./http/routes/users/get-users";
+import { getPrescriptions } from "./http/routes/prescriptions/get-prescriptions";
+import { createPrescription } from "./http/routes/prescriptions/create-prescription";
 
 const port = process.env.PORT || 3333;
 
@@ -27,7 +29,7 @@ app.register(fastifySwagger, {
 		info: {
 			title: "prescriptions api",
 			description:
-				"An API to manage prescriptions and users in a medical system",
+				"An API to manage prescriptions and users in a medical system.",
 			version: "1.0.0",
 		},
 	},
@@ -45,10 +47,16 @@ app.get("/", async () => {
 });
 
 // auth
-app.register(getUsers);
-app.register(deleteUser);
 app.register(signUp);
 app.register(signIn);
+
+// user
+app.register(getUsers);
+app.register(deleteUser);
+
+// prescriptions
+app.register(getPrescriptions);
+app.register(createPrescription);
 
 const start = async () => {
 	try {

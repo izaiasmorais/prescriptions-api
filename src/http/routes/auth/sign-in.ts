@@ -1,8 +1,9 @@
-import { prisma } from "../../lib/prisma";
+
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
-import z from "zod";
 import bcrypt from "bcrypt";
+import z from "zod";
+import { prisma } from "../../../lib/prisma";
 
 const signInSchema = z.object({
 	email: z.string().email(),
