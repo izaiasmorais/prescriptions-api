@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("postgresql://prescriptions_api_user:dr8FeTB4dJIryDSfMkOQ34V7cCssLRGJ@dpg-crpnic3v2p9s7388lmrg-a.oregon-postgres.render.com/prescriptions_api")
 }
 
 model User {
@@ -17,7 +17,7 @@ model User {
 }
 
 model Prescription {
-  id           String   @id @default(uuid())
+  id            String   @id @default(uuid())
   medicalRecord String
   name          String
   medicine      String

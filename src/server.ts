@@ -16,6 +16,7 @@ import { deleteUser } from "./http/routes/users/delete-user";
 import { getUsers } from "./http/routes/users/get-users";
 import { getPrescriptions } from "./http/routes/prescriptions/get-prescriptions";
 import { createPrescription } from "./http/routes/prescriptions/create-prescription";
+import { getProfile } from "./http/routes/users/get-profile";
 
 const port = process.env.PORT || 3333;
 
@@ -32,6 +33,15 @@ app.register(fastifySwagger, {
 				"An API to manage prescriptions and users in a medical system.",
 			version: "1.0.0",
 		},
+		components: {
+			securitySchemes: {
+				bearerAuth: {
+					type: "http",
+					scheme: "bearer",
+					bearerFormat: "JWT",
+				},
+			},
+		},
 	},
 	transform: jsonSchemaTransform,
 });
@@ -39,7 +49,7 @@ app.register(fastifySwaggerUI, {
 	routePrefix: "/docs",
 });
 app.register(fastifyJwt, {
-	secret: env.JWT_SECRET,
+	secret: "secret",
 });
 
 app.get("/", async () => {
@@ -53,6 +63,7 @@ app.register(signIn);
 // user
 app.register(getUsers);
 app.register(deleteUser);
+app.register(getProfile);
 
 // prescriptions
 app.register(getPrescriptions);
@@ -61,7 +72,7 @@ app.register(createPrescription);
 const start = async () => {
 	try {
 		await app.listen({ port: Number(port), host: "0.0.0.0" });
-		app.log.info(`Server listening on port ${port}`);
+		console.log(`Server listening on port ${port}`);
 	} catch (err) {
 		app.log.error(err);
 		process.exit(1);
