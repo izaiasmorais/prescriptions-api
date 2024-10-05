@@ -42,6 +42,8 @@ Configure o arquivo .env com suas credenciais:
 
 ```env
 DATABASE_ULR=""
+PORT=""
+JWT_SECRET=""
 ```
 
 ## Executando o Projeto
