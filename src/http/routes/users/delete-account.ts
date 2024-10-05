@@ -14,6 +14,7 @@ export async function deleteAccount(app: FastifyInstance) {
 				schema: {
 					tags: ["auth"],
 					summary: "Delete your own account",
+					security: [{ bearerAuth: [] }],
 					params: z.object({
 						id: z.string().uuid(),
 					}),
@@ -21,10 +22,13 @@ export async function deleteAccount(app: FastifyInstance) {
 						200: z.object({
 							message: z.string(),
 						}),
-						404: z.object({
+						401: z.object({
 							error: z.string(),
 						}),
 						403: z.object({
+							error: z.string(),
+						}),
+						404: z.object({
 							error: z.string(),
 						}),
 					},
@@ -34,7 +38,9 @@ export async function deleteAccount(app: FastifyInstance) {
 				const { id } = z
 					.object({ id: z.string().uuid() })
 					.parse(request.params);
+
 				const userId = await request.getCurrentUserId();
+
 				const user = await prisma.user.findUnique({
 					where: { id },
 				});

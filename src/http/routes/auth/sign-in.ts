@@ -1,9 +1,9 @@
-
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
+import { BadRequestError } from "../_errors/bad-request-error";
+import { prisma } from "../../../lib/prisma";
 import bcrypt from "bcrypt";
 import z from "zod";
-import { prisma } from "../../../lib/prisma";
 
 const signInSchema = z.object({
 	email: z.string().email(),
@@ -24,14 +24,8 @@ export async function signIn(app: FastifyInstance) {
 					password: z.string().min(6),
 				}),
 				response: {
-					200: z.object({
+					201: z.object({
 						token: z.string(),
-					}),
-					400: z.object({
-						error: z.string(),
-					}),
-					401: z.object({
-						error: z.string(),
 					}),
 				},
 			},
@@ -44,17 +38,13 @@ export async function signIn(app: FastifyInstance) {
 			});
 
 			if (!user) {
-				return reply.status(401).send({
-					error: "Invalid email or password",
-				});
+				throw new BadRequestError("Invalid email!");
 			}
 
 			const passwordMatch = await bcrypt.compare(password, user.password);
 
 			if (!passwordMatch) {
-				return reply.status(401).send({
-					error: "Invalid password",
-				});
+				throw new BadRequestError("Invalid password!");
 			}
 
 			const token = await reply.jwtSign(
@@ -68,7 +58,7 @@ export async function signIn(app: FastifyInstance) {
 				}
 			);
 
-			return reply.status(200).send({
+			return reply.status(201).send({
 				token,
 			});
 		}

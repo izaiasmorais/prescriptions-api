@@ -14,6 +14,7 @@ export async function getPrescriptions(app: FastifyInstance) {
 				schema: {
 					tags: ["prescriptions"],
 					summary: "Get all prescriptions",
+					security: [{ bearerAuth: [] }],
 					response: {
 						200: z.array(
 							z.object({
@@ -28,6 +29,9 @@ export async function getPrescriptions(app: FastifyInstance) {
 								posologyDays: z.array(z.string()),
 							})
 						),
+						401: z.object({
+							error: z.string(),
+						}),
 					},
 				},
 			},

@@ -10,7 +10,7 @@ export async function getProfile(app: FastifyInstance) {
 		.withTypeProvider<ZodTypeProvider>()
 		.register(auth)
 		.get(
-			`/me`,
+			`/profile`,
 			{
 				schema: {
 					tags: ["auth"],
@@ -23,6 +23,12 @@ export async function getProfile(app: FastifyInstance) {
 								name: z.string().nullable(),
 								email: z.string().email(),
 							}),
+						}),
+						401: z.object({
+							error: z.string(),
+						}),
+						404: z.object({
+							error: z.string(),
 						}),
 					},
 				},
@@ -43,7 +49,9 @@ export async function getProfile(app: FastifyInstance) {
 				});
 
 				if (!user) {
-					throw new BadRequestError("User not found");
+					return reply.status(404).send({
+						error: "User not found",
+					});
 				}
 
 				return reply.send({ user });

@@ -28,6 +28,7 @@ export async function createPrescription(app: FastifyInstance) {
 				schema: {
 					tags: ["prescriptions"],
 					summary: "Create a new prescription",
+					security: [{ bearerAuth: [] }],
 					body: z.object({
 						medicalRecord: z.string(),
 						name: z.string(),
@@ -61,10 +62,6 @@ export async function createPrescription(app: FastifyInstance) {
 			},
 			async (request, reply) => {
 				try {
-					if (!request.headers.authorization) {
-						return reply.status(401).send({ error: "Unauthorized" });
-					}
-
 					const {
 						medicalRecord,
 						name,

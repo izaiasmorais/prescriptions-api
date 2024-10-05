@@ -23,8 +23,8 @@ const port = env.PORT;
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 
 app.setValidatorCompiler(validatorCompiler);
-app.setErrorHandler(errorHandler);
 app.setSerializerCompiler(serializerCompiler);
+app.setErrorHandler(errorHandler);
 app.register(fastifyCors);
 app.register(fastifySwagger, {
 	openapi: {
@@ -50,7 +50,7 @@ app.register(fastifySwaggerUI, {
 	routePrefix: "/docs",
 });
 app.register(fastifyJwt, {
-	secret: "secret",
+	secret: env.JWT_SECRET,
 });
 
 app.get("/", async () => {
