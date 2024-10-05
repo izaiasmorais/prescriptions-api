@@ -9,16 +9,16 @@ import {
 	validatorCompiler,
 	ZodTypeProvider,
 } from "fastify-type-provider-zod";
-import { env } from "./env";
-import { signUp } from "./http/routes/auth/sign-up";
-import { signIn } from "./http/routes/auth/sign-in";
-import { deleteAccount } from "./http/routes/auth/delete-account";
-import { getPrescriptions } from "./http/routes/prescriptions/get-prescriptions";
-import { createPrescription } from "./http/routes/prescriptions/create-prescription";
-import { getProfile } from "./http/routes/auth/get-profile";
+import { env } from "../env";
+import { signUp } from "./routes/auth/sign-up";
+import { signIn } from "./routes/auth/sign-in";
+import { deleteAccount } from "./routes/auth/delete-account";
+import { getPrescriptions } from "./routes/prescriptions/get-prescriptions";
+import { createPrescription } from "./routes/prescriptions/create-prescription";
+import { getProfile } from "./routes/auth/get-profile";
 import { errorHandler } from "./error-handler";
-import { deletePrescription } from "./http/routes/prescriptions/delete-prescription";
-import { editPrescription } from "./http/routes/prescriptions/edit-prescription";
+import { deletePrescription } from "./routes/prescriptions/delete-prescription";
+import { editPrescription } from "./routes/prescriptions/edit-prescription";
 
 const port = env.PORT;
 
@@ -74,7 +74,7 @@ app.register(editPrescription);
 const start = async () => {
 	try {
 		await app.listen({ port: Number(port), host: "0.0.0.0" });
-		console.log(`Server listening on port ${port}`);
+		console.log("HTTP server running!");
 	} catch (err) {
 		app.log.error(err);
 		process.exit(1);

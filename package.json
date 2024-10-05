@@ -4,9 +4,11 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"dev": "tsx watch src/server.ts",
+		"dev": "tsx watch src/http/server.ts",
 		"dev:migrate": "pnpm prisma migrate dev",
-		"dev:studio": "pnpm prisma studio"
+		"dev:studio": "pnpm prisma studio",
+		"start": "node dist/http/server.js",
+		"build": "tsc"
 	},
 	"keywords": [],
 	"author": "",
