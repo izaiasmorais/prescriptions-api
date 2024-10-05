@@ -12,11 +12,13 @@ import {
 import { env } from "./env";
 import { signUp } from "./http/routes/auth/sign-up";
 import { signIn } from "./http/routes/auth/sign-in";
-import { deleteAccount } from "./http/routes/users/delete-account";
+import { deleteAccount } from "./http/routes/auth/delete-account";
 import { getPrescriptions } from "./http/routes/prescriptions/get-prescriptions";
 import { createPrescription } from "./http/routes/prescriptions/create-prescription";
-import { getProfile } from "./http/routes/users/get-profile";
+import { getProfile } from "./http/routes/auth/get-profile";
 import { errorHandler } from "./error-handler";
+import { deletePrescription } from "./http/routes/prescriptions/delete-prescription";
+import { editPrescription } from "./http/routes/prescriptions/edit-prescription";
 
 const port = env.PORT;
 
@@ -66,6 +68,8 @@ app.register(deleteAccount);
 // prescriptions
 app.register(getPrescriptions);
 app.register(createPrescription);
+app.register(deletePrescription);
+app.register(editPrescription);
 
 const start = async () => {
 	try {

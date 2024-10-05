@@ -19,9 +19,7 @@ export async function deleteAccount(app: FastifyInstance) {
 						id: z.string().uuid(),
 					}),
 					response: {
-						200: z.object({
-							message: z.string(),
-						}),
+						204: z.null(),
 						401: z.object({
 							error: z.string(),
 						}),
@@ -61,7 +59,7 @@ export async function deleteAccount(app: FastifyInstance) {
 					where: { id },
 				});
 
-				return reply.status(200).send();
+				return reply.status(204).send();
 			}
 		);
 }
