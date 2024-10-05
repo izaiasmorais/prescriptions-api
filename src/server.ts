@@ -12,17 +12,18 @@ import {
 import { env } from "./env";
 import { signUp } from "./http/routes/auth/sign-up";
 import { signIn } from "./http/routes/auth/sign-in";
-import { deleteUser } from "./http/routes/users/delete-user";
-import { getUsers } from "./http/routes/users/get-users";
+import { deleteAccount } from "./http/routes/users/delete-account";
 import { getPrescriptions } from "./http/routes/prescriptions/get-prescriptions";
 import { createPrescription } from "./http/routes/prescriptions/create-prescription";
 import { getProfile } from "./http/routes/users/get-profile";
+import { errorHandler } from "./error-handler";
 
 const port = env.PORT;
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 
 app.setValidatorCompiler(validatorCompiler);
+app.setErrorHandler(errorHandler);
 app.setSerializerCompiler(serializerCompiler);
 app.register(fastifyCors);
 app.register(fastifySwagger, {
@@ -59,11 +60,8 @@ app.get("/", async () => {
 // auth
 app.register(signUp);
 app.register(signIn);
-
-// user
-app.register(getUsers);
-app.register(deleteUser);
 app.register(getProfile);
+app.register(deleteAccount);
 
 // prescriptions
 app.register(getPrescriptions);
