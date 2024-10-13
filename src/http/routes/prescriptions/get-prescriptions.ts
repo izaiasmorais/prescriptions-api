@@ -92,12 +92,16 @@ export async function getPrescriptions(app: FastifyInstance) {
 						medicalRecord: medicalRecord
 							? { contains: medicalRecord }
 							: undefined,
-						name: name ? { contains: name } : undefined,
-						medicine: medicine ? { contains: medicine } : undefined,
+						name: name ? { contains: name, mode: "insensitive" } : undefined,
+						medicine: medicine
+							? { contains: medicine, mode: "insensitive" }
+							: undefined,
 						dose: dose ? { equals: dose } : undefined,
-						unit: unit ? { contains: unit } : undefined,
+						unit: unit ? { contains: unit, mode: "insensitive" } : undefined,
 						posology: posology ? { contains: posology } : undefined,
-						posologyDays: posologyDays ? { hasSome: [...posologyDays] } : undefined,
+						posologyDays: posologyDays
+							? { hasSome: [...posologyDays] }
+							: undefined,
 					},
 				});
 
