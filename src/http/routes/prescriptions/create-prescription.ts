@@ -1,8 +1,8 @@
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { prisma } from "../../../lib/prisma";
-import z from "zod";
 import { auth } from "../../middleware/auth";
+import z from "zod";
 
 const createPrescriptionsSchema = z.object({
 	id: z.string(),
@@ -61,6 +61,8 @@ export async function createPrescription(app: FastifyInstance) {
 				},
 			},
 			async (request, reply) => {
+				await request.getCurrentUserId();
+
 				try {
 					const {
 						medicalRecord,

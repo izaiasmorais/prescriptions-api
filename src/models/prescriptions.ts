@@ -1,3 +1,15 @@
+export interface Prescription {
+	id: string;
+	medicalRecord: string;
+	name: string;
+	medicine: string;
+	unit: string;
+	dose: number;
+	via: string;
+	posology: string;
+	posologyDays: string[];
+}
+
 export interface GetPrescriptionsQueryParams {
 	pageIndex?: number;
 	perPage?: number;
