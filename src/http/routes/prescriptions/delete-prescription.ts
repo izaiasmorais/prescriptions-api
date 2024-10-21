@@ -30,7 +30,7 @@ export async function deletePrescription(app: FastifyInstance) {
 				},
 			},
 			async (request, reply) => {
-				await request.getCurrentUserId();
+				// await request.getCurrentUserId();
 
 				const { id } = z
 					.object({ id: z.string().uuid() })

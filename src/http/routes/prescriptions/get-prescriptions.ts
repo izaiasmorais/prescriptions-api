@@ -55,7 +55,7 @@ export async function getPrescriptions(app: FastifyInstance) {
 				},
 			},
 			async (request, reply) => {
-				await request.getCurrentUserId();
+				// await request.getCurrentUserId();
 
 				const {
 					pageIndex,

@@ -67,7 +67,7 @@ export async function editPrescription(app: FastifyInstance) {
 				},
 			},
 			async (request, reply) => {
-				await request.getCurrentUserId();
+				// await request.getCurrentUserId();
 
 				try {
 					const { id } = request.params as { id: string };
