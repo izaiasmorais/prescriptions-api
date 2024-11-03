@@ -22,3 +22,5 @@ export interface GetPrescriptionsQueryParams {
 	posology?: string | null;
 	posologyDays?: string[] | null;
 }
+
+export interface GetPrescriptionsResponse {}
