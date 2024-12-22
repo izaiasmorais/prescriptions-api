@@ -27,6 +27,9 @@ export async function signIn(app: FastifyInstance) {
 					201: z.object({
 						token: z.string(),
 					}),
+					400: z.object({
+						error: z.string(),
+					}),
 				},
 			},
 		},
@@ -38,13 +41,17 @@ export async function signIn(app: FastifyInstance) {
 			});
 
 			if (!user) {
-				throw new BadRequestError("Invalid email!");
+				return reply.status(400).send({
+					error: "Invalid email!",
+				});
 			}
 
 			const passwordMatch = await bcrypt.compare(password, user.password);
 
 			if (!passwordMatch) {
-				throw new BadRequestError("Invalid password!");
+				return reply.status(400).send({
+					error: "Invalid password!",
+				});
 			}
 
 			const token = await reply.jwtSign(

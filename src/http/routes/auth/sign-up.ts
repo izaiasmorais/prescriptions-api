@@ -47,6 +47,12 @@ export async function signUp(app: FastifyInstance) {
 				});
 			}
 
+			if (password.length < 6) {
+				return reply.status(400).send({
+					error: "Password must be at least 6 characters",
+				});
+			}
+
 			const hashedPassword = await bcrypt.hash(password, 10);
 
 			await prisma.user.create({
