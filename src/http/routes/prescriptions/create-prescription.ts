@@ -61,7 +61,7 @@ export async function createPrescription(app: FastifyInstance) {
 				},
 			},
 			async (request, reply) => {
-				// await request.getCurrentUserId()
+				await request.getCurrentUserId()
 
 				try {
 					const {

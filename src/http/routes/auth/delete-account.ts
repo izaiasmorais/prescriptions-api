@@ -15,9 +15,6 @@ export async function deleteAccount(app: FastifyInstance) {
 					tags: ["auth"],
 					summary: "Delete your own account",
 					security: [{ bearerAuth: [] }],
-					params: z.object({
-						id: z.string().uuid(),
-					}),
 					response: {
 						204: z.null(),
 						401: z.object({
@@ -33,30 +30,10 @@ export async function deleteAccount(app: FastifyInstance) {
 				},
 			},
 			async (request, reply) => {
-				const { id } = z
-					.object({ id: z.string().uuid() })
-					.parse(request.params);
-
 				const userId = await request.getCurrentUserId();
 
-				const user = await prisma.user.findUnique({
-					where: { id },
-				});
-
-				if (!user) {
-					return reply.status(404).send({
-						error: "User not found",
-					});
-				}
-
-				if (userId !== id) {
-					return reply.status(403).send({
-						error: "You are not allowed to delete this user",
-					});
-				}
-
 				await prisma.user.delete({
-					where: { id },
+					where: { id: userId },
 				});
 
 				return reply.status(204).send();
