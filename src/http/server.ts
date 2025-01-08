@@ -21,64 +21,70 @@ import { errorHandler } from "./error-handler";
 import { env } from "../env";
 import { prisma } from "../libs/prisma";
 
-export const buildApp = async () => {
-	const app = fastify().withTypeProvider<ZodTypeProvider>();
+const port = Number(env.PORT) || 3333;
 
-	// Configurações de validação e serialização
-	app.setValidatorCompiler(validatorCompiler);
-	app.setSerializerCompiler(serializerCompiler);
+const app = fastify().withTypeProvider<ZodTypeProvider>();
 
-	// Middleware de tratamento de erros
-	app.setErrorHandler(errorHandler);
+// Configurações de validação e serialização
+app.setValidatorCompiler(validatorCompiler);
+app.setSerializerCompiler(serializerCompiler);
 
-	// Plugins
-	app.register(fastifyCors);
-	app.register(fastifySwagger, {
-		openapi: {
-			info: {
-				title: "prescriptions api",
-				description:
-					"An API to manage prescriptions and users in a medical system.",
-				version: "1.0.0",
-			},
-			components: {
-				securitySchemes: {
-					bearerAuth: {
-						type: "http",
-						scheme: "bearer",
-						bearerFormat: "JWT",
-					},
+// Middleware de tratamento de erros
+app.setErrorHandler(errorHandler);
+
+// Plugins
+app.register(fastifyCors);
+app.register(fastifySwagger, {
+	openapi: {
+		info: {
+			title: "prescriptions api",
+			description:
+				"An API to manage prescriptions and users in a medical system.",
+			version: "1.0.0",
+		},
+		components: {
+			securitySchemes: {
+				bearerAuth: {
+					type: "http",
+					scheme: "bearer",
+					bearerFormat: "JWT",
 				},
 			},
 		},
-		transform: jsonSchemaTransform,
-	});
-	app.register(fastifySwaggerUI, {
-		routePrefix: "/docs",
-	});
-	app.register(fastifyJwt, {
-		secret: env.JWT_SECRET,
-	});
+	},
+	transform: jsonSchemaTransform,
+});
+app.register(fastifySwaggerUI, {
+	routePrefix: "/docs",
+});
+app.register(fastifyJwt, {
+	secret: env.JWT_SECRET,
+});
 
-	// Registra o Prisma no contexto do Fastify
-	app.decorate("prisma", prisma);
+// Registra o Prisma no contexto do Fastify
+app.decorate("prisma", prisma);
 
-	// Rotas
-	app.get("/", async () => {
-		return { message: "Hello World" };
-	});
+// Rotas
+app.get("/", async () => {
+	return { message: "Hello World" };
+});
 
-	// Autenticação
-	app.register(signUp);
-	app.register(signIn);
-	app.register(getProfile);
-	app.register(deleteAccount);
+// Autenticação
+app.register(signUp);
+app.register(signIn);
+app.register(getProfile);
+app.register(deleteAccount);
 
-	// Prescrições
-	app.register(getPrescriptions);
-	app.register(createPrescription);
-	app.register(deletePrescription);
-	app.register(editPrescription);
+// Prescrições
+app.register(getPrescriptions);
+app.register(createPrescription);
+app.register(deletePrescription);
+app.register(editPrescription);
 
-	return app;
-};
+try {
+	app.listen({ port, host: "0.0.0.0" });
+	console.log(`HTTP server running at PORT ${env.PORT}`);
+} catch (err) {
+	app.log.error(err);
+	process.exit(1);
+}
