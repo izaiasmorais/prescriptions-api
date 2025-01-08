@@ -9,76 +9,76 @@ import {
 	validatorCompiler,
 	ZodTypeProvider,
 } from "fastify-type-provider-zod";
-import { env } from "../env";
 import { signUp } from "./routes/auth/sign-up";
 import { signIn } from "./routes/auth/sign-in";
 import { deleteAccount } from "./routes/auth/delete-account";
 import { getPrescriptions } from "./routes/prescriptions/get-prescriptions";
 import { createPrescription } from "./routes/prescriptions/create-prescription";
 import { getProfile } from "./routes/auth/get-profile";
-import { errorHandler } from "./error-handler";
 import { deletePrescription } from "./routes/prescriptions/delete-prescription";
 import { editPrescription } from "./routes/prescriptions/edit-prescription";
+import { errorHandler } from "./error-handler";
+import { env } from "../env";
+import { prisma } from "../libs/prisma";
 
-const port = env.PORT;
+export const buildApp = async () => {
+	const app = fastify().withTypeProvider<ZodTypeProvider>();
 
-const app = fastify().withTypeProvider<ZodTypeProvider>();
+	// Configurações de validação e serialização
+	app.setValidatorCompiler(validatorCompiler);
+	app.setSerializerCompiler(serializerCompiler);
 
-app.setValidatorCompiler(validatorCompiler);
-app.setSerializerCompiler(serializerCompiler);
-app.setErrorHandler(errorHandler);
-app.register(fastifyCors);
-app.register(fastifySwagger, {
-	openapi: {
-		info: {
-			title: "prescriptions api",
-			description:
-				"An API to manage prescriptions and users in a medical system.",
-			version: "1.0.0",
-		},
-		components: {
-			securitySchemes: {
-				bearerAuth: {
-					type: "http",
-					scheme: "bearer",
-					bearerFormat: "JWT",
+	// Middleware de tratamento de erros
+	app.setErrorHandler(errorHandler);
+
+	// Plugins
+	app.register(fastifyCors);
+	app.register(fastifySwagger, {
+		openapi: {
+			info: {
+				title: "prescriptions api",
+				description:
+					"An API to manage prescriptions and users in a medical system.",
+				version: "1.0.0",
+			},
+			components: {
+				securitySchemes: {
+					bearerAuth: {
+						type: "http",
+						scheme: "bearer",
+						bearerFormat: "JWT",
+					},
 				},
 			},
 		},
-	},
-	transform: jsonSchemaTransform,
-});
-app.register(fastifySwaggerUI, {
-	routePrefix: "/docs",
-});
-app.register(fastifyJwt, {
-	secret: env.JWT_SECRET,
-});
+		transform: jsonSchemaTransform,
+	});
+	app.register(fastifySwaggerUI, {
+		routePrefix: "/docs",
+	});
+	app.register(fastifyJwt, {
+		secret: env.JWT_SECRET,
+	});
 
-app.get("/", async () => {
-	return { message: "Hello World" };
-});
+	// Registra o Prisma no contexto do Fastify
+	app.decorate("prisma", prisma);
 
-// auth
-app.register(signUp);
-app.register(signIn);
-app.register(getProfile);
-app.register(deleteAccount);
+	// Rotas
+	app.get("/", async () => {
+		return { message: "Hello World" };
+	});
 
-// prescriptions
-app.register(getPrescriptions);
-app.register(createPrescription);
-app.register(deletePrescription);
-app.register(editPrescription);
+	// Autenticação
+	app.register(signUp);
+	app.register(signIn);
+	app.register(getProfile);
+	app.register(deleteAccount);
 
-const start = async () => {
-	try {
-		await app.listen({ port: Number(port), host: "0.0.0.0" });
-		console.log("HTTP server running!");
-	} catch (err) {
-		app.log.error(err);
-		process.exit(1);
-	}
+	// Prescrições
+	app.register(getPrescriptions);
+	app.register(createPrescription);
+	app.register(deletePrescription);
+	app.register(editPrescription);
+
+	return app;
 };
-
-start();
