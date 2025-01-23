@@ -21,7 +21,7 @@ import { errorHandler } from "./error-handler";
 import { env } from "../env";
 import { prisma } from "../libs/prisma";
 
-const port = Number(env.PORT) || 3333;
+const port = Number(env.PORT);
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 
