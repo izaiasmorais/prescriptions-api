@@ -9,21 +9,21 @@ import {
 	validatorCompiler,
 	ZodTypeProvider,
 } from "fastify-type-provider-zod";
-import { signUp } from "./routes/auth/sign-up";
-import { signIn } from "./routes/auth/sign-in";
-import { deleteAccount } from "./routes/auth/delete-account";
-import { getPrescriptions } from "./routes/prescriptions/get-prescriptions";
-import { createPrescription } from "./routes/prescriptions/create-prescription";
-import { getProfile } from "./routes/auth/get-profile";
-import { deletePrescription } from "./routes/prescriptions/delete-prescription";
-import { editPrescription } from "./routes/prescriptions/edit-prescription";
+import { signUp } from "./controllers/auth/sign-up";
+import { signIn } from "./controllers/auth/sign-in";
+import { deleteAccount } from "./controllers/auth/delete-account";
+import { getPrescriptions } from "./controllers/prescriptions/get-prescriptions";
+import { createPrescription } from "./controllers/prescriptions/create-prescription";
+import { getProfile } from "./controllers/auth/get-profile";
+import { deletePrescription } from "./controllers/prescriptions/delete-prescription";
+import { editPrescription } from "./controllers/prescriptions/edit-prescription";
 import { errorHandler } from "./error-handler";
 import { env } from "../env";
 import { prisma } from "../libs/prisma";
 
 const port = Number(env.PORT);
 
-const app = fastify().withTypeProvider<ZodTypeProvider>();
+export const app = fastify().withTypeProvider<ZodTypeProvider>();
 
 // Configurações de validação e serialização
 app.setValidatorCompiler(validatorCompiler);

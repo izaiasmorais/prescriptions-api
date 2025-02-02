@@ -1,7 +1,7 @@
-import type { FastifyInstance } from "fastify";
-import type { ZodTypeProvider } from "fastify-type-provider-zod";
-import { prisma } from "../../../libs/prisma";
-import { auth } from "../../middleware/auth";
+import { FastifyInstance } from "fastify";
+import { ZodTypeProvider } from "fastify-type-provider-zod";
+import { prisma } from "../../../libs/prisma.js";
+import { auth } from "../../middleware/auth.js";
 import z from "zod";
 
 export async function deletePrescription(app: FastifyInstance) {

@@ -13,3 +13,16 @@ services:
       PGDATA: /data/postgres
     volumes:
       - ./data/pg:/data/postgres
+
+  postgres-shadow:
+    container_name: prescriptions-pg-shadow
+    image: postgres
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_USER: prescriptions
+      POSTGRES_PASSWORD: docker
+      POSTGRES_DB: prescriptions-shadow
+      PGDATA: /data/postgres-shadow
+    volumes:
+      - ./data/pg-shadow:/data/postgres-shadow
