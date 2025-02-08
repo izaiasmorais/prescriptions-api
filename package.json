@@ -5,10 +5,10 @@
 	"main": "src/http/server.ts",
 	"scripts": {
 		"dev": "tsx watch src/http/server.ts",
+		"start": "node dist/http/server.js",
 		"migrate": "pnpm prisma migrate dev",
 		"generate": "pnpm prisma generate",
 		"studio": "pnpm prisma studio -b chrome -p 5174",
-		"start": "node dist/http/server.js",
 		"build": "tsc"
 	},
 	"keywords": [],
