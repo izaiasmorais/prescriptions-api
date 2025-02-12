@@ -1,8 +1,16 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import { prisma } from "../../../libs/prisma.js";
-import { auth } from "../../middleware/auth.js";
+import { prisma } from "../../../libs/prisma";
+import { auth } from "../../middlewares/auth";
 import z from "zod";
+import {
+	defaultErrorResponseSchema,
+	defaultSuccessResponseSchema,
+} from "../../schemas/response";
+
+const deletePrescriptionsParamsSchema = z.object({
+	id: z.string().uuid(),
+});
 
 export async function deletePrescription(app: FastifyInstance) {
 	app
@@ -15,26 +23,18 @@ export async function deletePrescription(app: FastifyInstance) {
 					tags: ["prescriptions"],
 					summary: "Delete a prescription",
 					security: [{ bearerAuth: [] }],
-					params: z.object({
-						id: z.string().uuid(),
-					}),
+					params: deletePrescriptionsParamsSchema,
 					response: {
-						204: z.null(),
-						401: z.object({
-							error: z.string(),
-						}),
-						404: z.object({
-							error: z.string(),
-						}),
+						204: defaultSuccessResponseSchema(z.null()).describe("No Content"),
+						401: defaultErrorResponseSchema.describe("Unauthorized"),
+						404: defaultErrorResponseSchema.describe("Prescription not found"),
 					},
 				},
 			},
 			async (request, reply) => {
 				await request.getCurrentUserId();
 
-				const { id } = z
-					.object({ id: z.string().uuid() })
-					.parse(request.params);
+				const { id } = request.params;
 
 				const prescription = await prisma.prescription.findUnique({
 					where: { id },
@@ -42,7 +42,9 @@ export async function deletePrescription(app: FastifyInstance) {
 
 				if (!prescription) {
 					return reply.status(404).send({
+						success: false,
 						error: "Prescription not found",
+						data: null,
 					});
 				}
 
@@ -50,7 +52,11 @@ export async function deletePrescription(app: FastifyInstance) {
 					where: { id },
 				});
 
-				return reply.status(204).send();
+				return reply.status(204).send({
+					success: true,
+					error: null,
+					data: null,
+				});
 			}
 		);
 }

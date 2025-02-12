@@ -1,5 +1,4 @@
 import { ZodError } from "zod";
-import { BadRequestError } from "./controllers/_errors/bad-request-error";
 import { UnauthorizedError } from "./controllers/_errors/unauthorized-error";
 import { FastifyInstance } from "fastify";
 
@@ -10,22 +9,31 @@ export const errorHandler: FastifiErrorHandler = async (error, _, reply) => {
 
 	if (error instanceof ZodError) {
 		return reply.status(400).send({
-			message: "Validation error",
-			errors: error.flatten().fieldErrors,
-		});
-	}
-
-	if (error instanceof BadRequestError) {
-		return reply.status(400).send({
-			message: error.message,
+			success: false,
+			error: error.errors[0].message,
+			data: null,
 		});
 	}
 
 	if (error instanceof UnauthorizedError) {
 		return reply.status(401).send({
-			message: error.message,
+			success: error.success,
+			error: error.error,
+			data: error.data,
 		});
 	}
 
-	return reply.status(500).send({ message: error.message });
+	if (error.code === "FST_ERR_VALIDATION" && Array.isArray(error.validation)) {
+		return reply.status(400).send({
+			success: false,
+			error: error.validation[0].message,
+			data: null,
+		});
+	}
+
+	return reply.status(500).send({
+		success: false,
+		error: "Internal server error",
+		data: null,
+	});
 };

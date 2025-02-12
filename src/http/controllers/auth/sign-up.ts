@@ -3,14 +3,16 @@ import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { prisma } from "../../../libs/prisma.js";
 import bcrypt from "bcrypt";
 import z from "zod";
+import {
+	defaultErrorResponseSchema,
+	defaultSuccessResponseSchema,
+} from "../../schemas/response";
 
-const signUpSchema = z.object({
-	name: z.string(),
+const signUpRequestBodySchema = z.object({
+	name: z.string().min(1, "Name is required"),
 	email: z.string().email(),
-	password: z.string().min(6),
+	password: z.string().min(6, "Password must contain at least 6 characters"),
 });
-
-type SignUpBody = z.infer<typeof signUpSchema>;
 
 export async function signUp(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().post(
@@ -19,37 +21,26 @@ export async function signUp(app: FastifyInstance) {
 			schema: {
 				tags: ["auth"],
 				summary: "Register a new user",
-				body: z.object({
-					name: z.string(),
-					email: z.string().email(),
-					password: z.string().min(6),
-				}),
+				body: signUpRequestBodySchema,
 				response: {
-					201: z.object({
-						message: z.string(),
-					}),
-					400: z.object({
-						error: z.string(),
-					}),
+					204: defaultSuccessResponseSchema(z.null()).describe("No Content"),
+					400: defaultErrorResponseSchema.describe("Bad Request"),
+					409: defaultErrorResponseSchema.describe("Conflict"),
 				},
 			},
 		},
 		async (request, reply) => {
-			const { name, email, password } = request.body as SignUpBody;
+			const { name, email, password } = request.body;
 
 			const emailAlreadyExists = await prisma.user.findUnique({
 				where: { email },
 			});
 
 			if (emailAlreadyExists) {
-				return reply.status(400).send({
-					error: "Email already registered",
-				});
-			}
-
-			if (password.length < 6) {
-				return reply.status(400).send({
-					error: "Password must be at least 6 characters",
+				return reply.status(409).send({
+					success: false,
+					error: "User already registered",
+					data: null,
 				});
 			}
 
@@ -64,7 +55,9 @@ export async function signUp(app: FastifyInstance) {
 			});
 
 			return reply.status(201).send({
-				message: "User registered successfully",
+				success: true,
+				error: null,
+				data: null,
 			});
 		}
 	);

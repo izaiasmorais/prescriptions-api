@@ -1,9 +1,12 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { prisma } from "../../../libs/prisma.js";
-import { auth } from "../../middleware/auth.js";
-import { GetPrescriptionsQueryParams } from "../../../models/prescriptions.js";
+import { auth } from "../../middlewares/auth.js";
 import z from "zod";
+import {
+	defaultErrorResponseSchema,
+	defaultSuccessResponseSchema,
+} from "../../schemas/response";
 
 const prescriptionSchema = z.object({
 	id: z.string(),
@@ -17,6 +20,27 @@ const prescriptionSchema = z.object({
 	posologyDays: z.array(z.string()),
 });
 
+const getPrescriptionsResponseBodySchema = z.object({
+	prescriptions: z.array(prescriptionSchema),
+	meta: z.object({
+		pageIndex: z.number(),
+		perPage: z.number(),
+		totalCount: z.number(),
+	}),
+});
+
+const getPrescriptionsQuerySchema = z.object({
+	pageIndex: z.coerce.number().int().nonnegative().optional(),
+	perPage: z.coerce.number().int().positive().optional(),
+	id: z.string().nullable().optional(),
+	medicalRecord: z.string().nullable().optional(),
+	name: z.string().nullable().optional(),
+	medicine: z.string().nullable().optional(),
+	unit: z.string().nullable().optional(),
+	dose: z.coerce.number().nullable().optional(),
+	posology: z.string().nullable().optional(),
+});
+
 export async function getPrescriptions(app: FastifyInstance) {
 	app
 		.withTypeProvider<ZodTypeProvider>()
@@ -28,35 +52,19 @@ export async function getPrescriptions(app: FastifyInstance) {
 					tags: ["prescriptions"],
 					summary: "Get paginated prescriptions",
 					security: [{ bearerAuth: [] }],
-					querystring: z.object({
-						pageIndex: z.coerce.number().int().nonnegative().optional(),
-						perPage: z.coerce.number().int().positive().optional(),
-						id: z.string().nullable().optional(),
-						medicalRecord: z.string().nullable().optional(),
-						name: z.string().nullable().optional(),
-						medicine: z.string().nullable().optional(),
-						unit: z.string().nullable().optional(),
-						dose: z.coerce.number().nullable().optional(),
-						posology: z.string().nullable().optional(),
-					}),
+					querystring: getPrescriptionsQuerySchema,
 					response: {
-						200: z.object({
-							prescriptions: z.array(prescriptionSchema),
-							meta: z.object({
-								pageIndex: z.number(),
-								perPage: z.number(),
-								totalCount: z.number(),
-							}),
-						}),
-						401: z.object({
-							error: z.string(),
-						}),
+						200: defaultSuccessResponseSchema(
+							getPrescriptionsResponseBodySchema
+						).describe("OK"),
+						401: defaultErrorResponseSchema.describe("Unauthorized"),
 					},
+				},
+				preHandler: async (request) => {
+					await request.getCurrentUserId();
 				},
 			},
 			async (request, reply) => {
-				await request.getCurrentUserId();
-
 				const {
 					pageIndex,
 					perPage,
@@ -67,7 +75,7 @@ export async function getPrescriptions(app: FastifyInstance) {
 					dose,
 					unit,
 					posology,
-				} = request.query as GetPrescriptionsQueryParams;
+				} = request.query;
 
 				const page = pageIndex || 0;
 				const itemsPerPage = perPage || 5;
@@ -118,11 +126,15 @@ export async function getPrescriptions(app: FastifyInstance) {
 				});
 
 				return reply.send({
-					prescriptions,
-					meta: {
-						pageIndex: page,
-						perPage: itemsPerPage,
-						totalCount,
+					success: true,
+					error: null,
+					data: {
+						prescriptions,
+						meta: {
+							pageIndex: page,
+							perPage: itemsPerPage,
+							totalCount,
+						},
 					},
 				});
 			}

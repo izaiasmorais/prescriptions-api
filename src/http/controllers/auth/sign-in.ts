@@ -3,13 +3,19 @@ import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { prisma } from "../../../libs/prisma.js";
 import bcrypt from "bcrypt";
 import z from "zod";
+import {
+	defaultErrorResponseSchema,
+	defaultSuccessResponseSchema,
+} from "../../schemas/response";
 
-const signInSchema = z.object({
+const signInRequestBodySchema = z.object({
 	email: z.string().email(),
-	password: z.string().min(6),
+	password: z.string().min(6, "Password must contain at least 6 characters"),
 });
 
-type SignInBody = z.infer<typeof signInSchema>;
+const signInResponseBodySchema = z.object({
+	token: z.string(),
+});
 
 export async function signIn(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().post(
@@ -18,22 +24,17 @@ export async function signIn(app: FastifyInstance) {
 			schema: {
 				tags: ["auth"],
 				summary: "Authenticate with password",
-				body: z.object({
-					email: z.string().email(),
-					password: z.string().min(6),
-				}),
+				body: signInRequestBodySchema,
 				response: {
-					201: z.object({
-						token: z.string(),
-					}),
-					400: z.object({
-						error: z.string(),
-					}),
+					201: defaultSuccessResponseSchema(signInResponseBodySchema).describe(
+						"Created"
+					),
+					400: defaultErrorResponseSchema.describe("Bad Request"),
 				},
 			},
 		},
 		async (request, reply) => {
-			const { email, password } = request.body as SignInBody;
+			const { email, password } = request.body;
 
 			const user = await prisma.user.findUnique({
 				where: { email },
@@ -41,7 +42,9 @@ export async function signIn(app: FastifyInstance) {
 
 			if (!user) {
 				return reply.status(400).send({
-					error: "Invalid email!",
+					success: false,
+					error: "Invalid Credentials",
+					data: null,
 				});
 			}
 
@@ -49,7 +52,9 @@ export async function signIn(app: FastifyInstance) {
 
 			if (!passwordMatch) {
 				return reply.status(400).send({
-					error: "Invalid password!",
+					success: false,
+					error: "Invalid Credentials",
+					data: null,
 				});
 			}
 
@@ -65,7 +70,11 @@ export async function signIn(app: FastifyInstance) {
 			);
 
 			return reply.status(201).send({
-				token,
+				success: true,
+				error: null,
+				data: {
+					token,
+				},
 			});
 		}
 	);

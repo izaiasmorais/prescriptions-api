@@ -10,7 +10,7 @@ export const auth = fastifyPlugin(async (app: FastifyInstance) => {
 
 				return sub;
 			} catch {
-				throw new UnauthorizedError("Invalid auth token");
+				throw new UnauthorizedError();
 			}
 		};
 	});

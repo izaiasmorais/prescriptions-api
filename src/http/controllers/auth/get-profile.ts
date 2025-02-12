@@ -1,38 +1,37 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { prisma } from "../../../libs/prisma.js";
-import { auth } from "../../middleware/auth.js";
+import { auth } from "../../middlewares/auth.js";
 import { z } from "zod";
+import {
+	defaultSuccessResponseSchema,
+	defaultErrorResponseSchema,
+} from "../../schemas/response";
+
+const userSchema = z.object({
+	id: z.string(),
+	name: z.string(),
+	email: z.string().email(),
+});
 
 export async function getProfile(app: FastifyInstance) {
 	app
 		.withTypeProvider<ZodTypeProvider>()
 		.register(auth)
 		.get(
-			`/profile`,
+			`/auth/profile`,
 			{
 				schema: {
 					tags: ["auth"],
 					summary: "Get authenticated user profile",
 					security: [{ bearerAuth: [] }],
 					response: {
-						200: z.object({
-							user: z.object({
-								id: z.string().uuid(),
-								name: z.string().nullable(),
-								email: z.string().email(),
-							}),
-						}),
-						401: z.object({
-							error: z.string(),
-						}),
-						404: z.object({
-							error: z.string(),
-						}),
+						200: defaultSuccessResponseSchema(userSchema),
+						401: defaultErrorResponseSchema.describe("Unauthorized"),
+						404: defaultErrorResponseSchema.describe("Not Found"),
 					},
 				},
 			},
-
 			async (request, reply) => {
 				const userId = await request.getCurrentUserId();
 
@@ -49,11 +48,17 @@ export async function getProfile(app: FastifyInstance) {
 
 				if (!user) {
 					return reply.status(404).send({
+						success: false,
 						error: "User not found",
+						data: null,
 					});
 				}
 
-				return reply.send({ user });
+				return reply.send({
+					success: true,
+					error: null,
+					data: user,
+				});
 			}
 		);
 }
