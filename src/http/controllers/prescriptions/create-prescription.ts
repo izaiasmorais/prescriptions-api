@@ -6,7 +6,7 @@ import {
 	defaultErrorResponseSchema,
 	defaultSuccessResponseSchema,
 } from "../../schemas/response";
-import { prescriptionsRequestBodySchema } from "http/schemas/prescription.js";
+import { prescriptionsRequestBodySchema } from "../../schemas/prescription";
 import z from "zod";
 
 export async function createPrescription(app: FastifyInstance) {

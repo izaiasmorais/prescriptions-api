@@ -9,7 +9,7 @@ import {
 import {
 	getPrescriptionsQuerySchema,
 	getPrescriptionsResponseBodySchema,
-} from "http/schemas/prescription.js";
+} from "../../schemas/prescription";
 
 export async function getPrescriptions(app: FastifyInstance) {
 	app

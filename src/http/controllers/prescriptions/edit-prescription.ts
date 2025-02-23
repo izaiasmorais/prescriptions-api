@@ -7,7 +7,7 @@ import {
 	defaultErrorResponseSchema,
 	defaultSuccessResponseSchema,
 } from "../../schemas/response";
-import { prescriptionsRequestBodySchema } from "http/schemas/prescription.js";
+import { prescriptionsRequestBodySchema } from "../../schemas/prescription";
 
 const editPrescriptionParamsSchema = z.object({
 	id: z.string(),
