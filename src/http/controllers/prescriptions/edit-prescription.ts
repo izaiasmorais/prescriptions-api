@@ -7,17 +7,7 @@ import {
 	defaultErrorResponseSchema,
 	defaultSuccessResponseSchema,
 } from "../../schemas/response";
-
-const editPrescriptionBodySchema = z.object({
-	medicalRecord: z.string(),
-	name: z.string(),
-	medicine: z.string(),
-	unit: z.string(),
-	dose: z.number(),
-	via: z.string(),
-	posology: z.string(),
-	posologyDays: z.array(z.string()),
-});
+import { prescriptionsRequestBodySchema } from "http/schemas/prescription.js";
 
 const editPrescriptionParamsSchema = z.object({
 	id: z.string(),
@@ -35,7 +25,7 @@ export async function editPrescription(app: FastifyInstance) {
 					summary: "Edit an existing prescription",
 					security: [{ bearerAuth: [] }],
 					params: editPrescriptionParamsSchema,
-					body: editPrescriptionBodySchema,
+					body: prescriptionsRequestBodySchema,
 					response: {
 						204: defaultSuccessResponseSchema(z.null()).describe("No Content"),
 						400: defaultErrorResponseSchema.describe("Bad Request"),
@@ -48,7 +38,8 @@ export async function editPrescription(app: FastifyInstance) {
 				await request.getCurrentUserId();
 
 				const { id } = request.params;
-				const body = request.body;
+
+				const body = prescriptionsRequestBodySchema.parse(request.body);
 
 				const prescription = await prisma.prescription.findUnique({
 					where: { id },

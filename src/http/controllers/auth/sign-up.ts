@@ -10,7 +10,7 @@ import {
 
 const signUpRequestBodySchema = z.object({
 	name: z.string().min(1, "Name is required"),
-	email: z.string().email(),
+	email: z.string().email("Invalid email"),
 	password: z.string().min(6, "Password must contain at least 6 characters"),
 });
 
@@ -23,7 +23,7 @@ export async function signUp(app: FastifyInstance) {
 				summary: "Register a new user",
 				body: signUpRequestBodySchema,
 				response: {
-					204: defaultSuccessResponseSchema(z.null()).describe("No Content"),
+					201: defaultSuccessResponseSchema(z.null()).describe("Created"),
 					400: defaultErrorResponseSchema.describe("Bad Request"),
 					409: defaultErrorResponseSchema.describe("Conflict"),
 				},

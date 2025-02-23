@@ -2,23 +2,12 @@ import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { prisma } from "../../../libs/prisma.js";
 import { auth } from "../../middlewares/auth";
-import z from "zod";
 import {
 	defaultErrorResponseSchema,
 	defaultSuccessResponseSchema,
 } from "../../schemas/response";
-
-const createPrescriptionsRequestBodySchema = z.object({
-	id: z.string(),
-	medicalRecord: z.string(),
-	name: z.string(),
-	medicine: z.string(),
-	unit: z.string(),
-	dose: z.number(),
-	via: z.string(),
-	posology: z.string(),
-	posologyDays: z.array(z.string()),
-});
+import { prescriptionsRequestBodySchema } from "http/schemas/prescription.js";
+import z from "zod";
 
 export async function createPrescription(app: FastifyInstance) {
 	app
@@ -31,9 +20,9 @@ export async function createPrescription(app: FastifyInstance) {
 					tags: ["prescriptions"],
 					summary: "Create a new prescription",
 					security: [{ bearerAuth: [] }],
-					body: createPrescriptionsRequestBodySchema,
+					body: prescriptionsRequestBodySchema,
 					response: {
-						204: defaultSuccessResponseSchema(z.null()).describe("No Content"),
+						201: defaultSuccessResponseSchema(z.null()).describe("Created"),
 						400: defaultErrorResponseSchema.describe("Bad Request"),
 						401: defaultErrorResponseSchema.describe("Unauthorized"),
 					},
@@ -42,11 +31,11 @@ export async function createPrescription(app: FastifyInstance) {
 			async (request, reply) => {
 				await request.getCurrentUserId();
 
-				const bodyData = request.body;
+				const body = prescriptionsRequestBodySchema.parse(request.body);
 
 				await prisma.prescription.create({
 					data: {
-						...bodyData,
+						...body,
 					},
 				});
 

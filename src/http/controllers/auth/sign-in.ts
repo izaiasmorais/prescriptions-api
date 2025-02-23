@@ -9,7 +9,7 @@ import {
 } from "../../schemas/response";
 
 const signInRequestBodySchema = z.object({
-	email: z.string().email(),
+	email: z.string().email("Invalid email"),
 	password: z.string().min(6, "Password must contain at least 6 characters"),
 });
 

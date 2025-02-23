@@ -5,8 +5,6 @@ import { FastifyInstance } from "fastify";
 type FastifiErrorHandler = FastifyInstance["errorHandler"];
 
 export const errorHandler: FastifiErrorHandler = async (error, _, reply) => {
-	console.log(error);
-
 	if (error instanceof ZodError) {
 		return reply.status(400).send({
 			success: false,

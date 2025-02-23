@@ -2,44 +2,14 @@ import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { prisma } from "../../../libs/prisma.js";
 import { auth } from "../../middlewares/auth.js";
-import z from "zod";
 import {
 	defaultErrorResponseSchema,
 	defaultSuccessResponseSchema,
 } from "../../schemas/response";
-
-const prescriptionSchema = z.object({
-	id: z.string(),
-	medicalRecord: z.string(),
-	name: z.string(),
-	medicine: z.string(),
-	unit: z.string(),
-	dose: z.number(),
-	via: z.string(),
-	posology: z.string(),
-	posologyDays: z.array(z.string()),
-});
-
-const getPrescriptionsResponseBodySchema = z.object({
-	prescriptions: z.array(prescriptionSchema),
-	meta: z.object({
-		pageIndex: z.number(),
-		perPage: z.number(),
-		totalCount: z.number(),
-	}),
-});
-
-const getPrescriptionsQuerySchema = z.object({
-	pageIndex: z.coerce.number().int().nonnegative().optional(),
-	perPage: z.coerce.number().int().positive().optional(),
-	id: z.string().nullable().optional(),
-	medicalRecord: z.string().nullable().optional(),
-	name: z.string().nullable().optional(),
-	medicine: z.string().nullable().optional(),
-	unit: z.string().nullable().optional(),
-	dose: z.coerce.number().nullable().optional(),
-	posology: z.string().nullable().optional(),
-});
+import {
+	getPrescriptionsQuerySchema,
+	getPrescriptionsResponseBodySchema,
+} from "http/schemas/prescription.js";
 
 export async function getPrescriptions(app: FastifyInstance) {
 	app
@@ -70,7 +40,7 @@ export async function getPrescriptions(app: FastifyInstance) {
 					perPage,
 					id,
 					medicalRecord,
-					name,
+					patientName,
 					medicine,
 					dose,
 					unit,
@@ -86,26 +56,30 @@ export async function getPrescriptions(app: FastifyInstance) {
 					select: {
 						id: true,
 						medicalRecord: true,
-						name: true,
+						patientName: true,
 						medicine: true,
 						unit: true,
 						dose: true,
 						via: true,
 						posology: true,
-						posologyDays: true,
+						treatmentDays: true,
 					},
 					where: {
 						id: id ? { contains: id } : undefined,
 						medicalRecord: medicalRecord
 							? { contains: medicalRecord }
 							: undefined,
-						name: name ? { contains: name, mode: "insensitive" } : undefined,
+						patientName: patientName
+							? { contains: patientName, mode: "insensitive" }
+							: undefined,
 						medicine: medicine
 							? { contains: medicine, mode: "insensitive" }
 							: undefined,
-						dose: dose ? { equals: dose } : undefined,
+						dose: dose ? { contains: dose, mode: "insensitive" } : undefined,
 						unit: unit ? { contains: unit, mode: "insensitive" } : undefined,
-						posology: posology ? { contains: posology } : undefined,
+						posology: posology
+							? { contains: posology, mode: "insensitive" }
+							: undefined,
 					},
 				});
 
@@ -115,13 +89,17 @@ export async function getPrescriptions(app: FastifyInstance) {
 						medicalRecord: medicalRecord
 							? { contains: medicalRecord }
 							: undefined,
-						name: name ? { contains: name, mode: "insensitive" } : undefined,
+						patientName: patientName
+							? { contains: patientName, mode: "insensitive" }
+							: undefined,
 						medicine: medicine
 							? { contains: medicine, mode: "insensitive" }
 							: undefined,
-						dose: dose ? { equals: dose } : undefined,
+						dose: dose ? { contains: dose, mode: "insensitive" } : undefined,
 						unit: unit ? { contains: unit, mode: "insensitive" } : undefined,
-						posology: posology ? { contains: posology } : undefined,
+						posology: posology
+							? { contains: posology, mode: "insensitive" }
+							: undefined,
 					},
 				});
 
