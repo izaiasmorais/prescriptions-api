@@ -19,7 +19,6 @@ import { deletePrescription } from "./controllers/prescriptions/delete-prescript
 import { editPrescription } from "./controllers/prescriptions/edit-prescription";
 import { errorHandler } from "./error-handler";
 import { env } from "../env";
-import { prisma } from "../libs/prisma";
 
 const port = Number(env.PORT);
 
@@ -38,8 +37,7 @@ app.register(fastifySwagger, {
 	openapi: {
 		info: {
 			title: "prescriptions api",
-			description:
-				"An API to manage prescriptions and users in a medical system.",
+			description: "An API to manage prescriptions in a medical system.",
 			version: "1.0.0",
 		},
 		components: {
@@ -55,27 +53,19 @@ app.register(fastifySwagger, {
 	transform: jsonSchemaTransform,
 });
 app.register(fastifySwaggerUI, {
-	routePrefix: "/docs",
+	routePrefix: "/",
 });
 app.register(fastifyJwt, {
 	secret: env.JWT_SECRET,
 });
 
-// Registra o Prisma no contexto do Fastify
-app.decorate("prisma", prisma);
-
-// Rotas
-app.get("/", async () => {
-	return { message: "Hello World" };
-});
-
-// Autenticação
+// Roas de Autenticação
 app.register(signUp);
 app.register(signIn);
 app.register(getProfile);
 app.register(deleteAccount);
 
-// Prescrições
+// Rotas de Prescrições
 app.register(getPrescriptions);
 app.register(createPrescription);
 app.register(deletePrescription);
