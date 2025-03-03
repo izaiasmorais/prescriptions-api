@@ -38,7 +38,7 @@ export async function deleteAccount(app: FastifyInstance) {
 				if (!user) {
 					return reply.status(404).send({
 						success: false,
-						error: "User not found",
+						error: "Usuário não encontrado",
 						data: null,
 					});
 				}

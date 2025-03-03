@@ -1,4 +1,8 @@
-import type { HTTPResponse } from "http/@types/http";
+interface HTTPResponse<T> {
+	success: boolean;
+	error: string | null;
+	data: T;
+}
 
 export class UnauthorizedError<T> implements HTTPResponse<T> {
 	success: boolean;

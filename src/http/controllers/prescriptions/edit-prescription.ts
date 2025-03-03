@@ -48,7 +48,7 @@ export async function editPrescription(app: FastifyInstance) {
 				if (!prescription) {
 					return reply.status(404).send({
 						success: false,
-						error: "Prescription not found",
+						error: "Prescrição não encontrada",
 						data: null,
 					});
 				}

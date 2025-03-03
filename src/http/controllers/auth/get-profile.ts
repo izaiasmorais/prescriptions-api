@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { prisma } from "../../../libs/prisma.js";
-import { auth } from "../../middlewares/auth.js";
+import { auth, verifyJwt } from "../../middlewares/auth.js";
 import { z } from "zod";
 import {
 	defaultSuccessResponseSchema,
@@ -21,6 +21,7 @@ export async function getProfile(app: FastifyInstance) {
 		.get(
 			`/auth/profile`,
 			{
+				onRequest: [verifyJwt],
 				schema: {
 					tags: ["auth"],
 					summary: "Get authenticated user profile",
@@ -49,7 +50,7 @@ export async function getProfile(app: FastifyInstance) {
 				if (!user) {
 					return reply.status(404).send({
 						success: false,
-						error: "User not found",
+						error: "Usuário não encontrado",
 						data: null,
 					});
 				}

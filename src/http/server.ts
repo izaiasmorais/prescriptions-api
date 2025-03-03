@@ -9,16 +9,10 @@ import {
 	validatorCompiler,
 	ZodTypeProvider,
 } from "fastify-type-provider-zod";
-import { signUp } from "./controllers/auth/sign-up";
-import { signIn } from "./controllers/auth/sign-in";
-import { deleteAccount } from "./controllers/auth/delete-account";
-import { getPrescriptions } from "./controllers/prescriptions/get-prescriptions";
-import { createPrescription } from "./controllers/prescriptions/create-prescription";
-import { getProfile } from "./controllers/auth/get-profile";
-import { deletePrescription } from "./controllers/prescriptions/delete-prescription";
-import { editPrescription } from "./controllers/prescriptions/edit-prescription";
 import { errorHandler } from "./error-handler";
 import { env } from "../env";
+import { authRoutes } from "./controllers/auth/auth.routes";
+import { prescriptionsRoutes } from "./controllers/prescriptions/prescriptions.routes";
 
 const port = Number(env.PORT);
 
@@ -60,16 +54,10 @@ app.register(fastifyJwt, {
 });
 
 // Roas de Autenticação
-app.register(signUp);
-app.register(signIn);
-app.register(getProfile);
-app.register(deleteAccount);
+app.register(authRoutes);
 
 // Rotas de Prescrições
-app.register(getPrescriptions);
-app.register(createPrescription);
-app.register(deletePrescription);
-app.register(editPrescription);
+app.register(prescriptionsRoutes);
 
 try {
 	app.listen({ port, host: "0.0.0.0" });

@@ -9,7 +9,7 @@ import {
 } from "../../schemas/response";
 
 const signUpRequestBodySchema = z.object({
-	name: z.string().min(1, "Name is required"),
+	name: z.string().min(5, "Name is required"),
 	email: z.string().email("Invalid email"),
 	password: z.string().min(6, "Password must contain at least 6 characters"),
 });
@@ -39,7 +39,7 @@ export async function signUp(app: FastifyInstance) {
 			if (emailAlreadyExists) {
 				return reply.status(409).send({
 					success: false,
-					error: "User already registered",
+					error: "Usuário já cadastrado",
 					data: null,
 				});
 			}

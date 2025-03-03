@@ -1,5 +1,5 @@
 import { ZodError } from "zod";
-import { UnauthorizedError } from "./controllers/_errors/unauthorized-error";
+import { UnauthorizedError } from "../errors/unauthorized-error";
 import { FastifyInstance } from "fastify";
 
 type FastifiErrorHandler = FastifyInstance["errorHandler"];
@@ -31,7 +31,7 @@ export const errorHandler: FastifiErrorHandler = async (error, _, reply) => {
 
 	return reply.status(500).send({
 		success: false,
-		error: "Internal server error",
+		error: "Erro interno no servidor",
 		data: null,
 	});
 };

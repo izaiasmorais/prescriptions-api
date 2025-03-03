@@ -9,12 +9,12 @@ import {
 } from "../../schemas/response";
 
 const signInRequestBodySchema = z.object({
-	email: z.string().email("Invalid email"),
+	email: z.string().email("Email inválido"),
 	password: z.string().min(6, "Password must contain at least 6 characters"),
 });
 
 const signInResponseBodySchema = z.object({
-	token: z.string(),
+	token: z.string().jwt(),
 });
 
 export async function signIn(app: FastifyInstance) {
@@ -43,7 +43,7 @@ export async function signIn(app: FastifyInstance) {
 			if (!user) {
 				return reply.status(400).send({
 					success: false,
-					error: "Invalid Credentials",
+					error: "Credenciais inválidas",
 					data: null,
 				});
 			}
@@ -53,7 +53,7 @@ export async function signIn(app: FastifyInstance) {
 			if (!passwordMatch) {
 				return reply.status(400).send({
 					success: false,
-					error: "Invalid Credentials",
+					error: "Credenciais inválidas",
 					data: null,
 				});
 			}
@@ -64,6 +64,7 @@ export async function signIn(app: FastifyInstance) {
 				},
 				{
 					sign: {
+						sub: user.id,
 						expiresIn: "1d",
 					},
 				}
