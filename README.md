@@ -15,16 +15,17 @@ Uma api que gerencia prescrições de um médico/profissional de forma completa,
 
 ## Endpoints
 
-| Método     | Endpoint               | Descrição                                   |
-| ---------- | ---------------------- | ------------------------------------------- |
-| **POST**   | `/auth/sign-up`        | Registrar um novo usuário                   |
-| **POST**   | `/auth/sign-in`        | Fazer login e obter o token de autenticação |
-| **GET**    | `/auth/profile`        | Obter o perfil do usuário autenticado       |
-| **DELETE** | `/auth/delete-account` | Excluir a própria conta                     |
-| **GET**    | `/prescriptions`       | Obter todas as prescrições                  |
-| **POST**   | `/prescriptions`       | Criar uma nova prescrição                   |
-| **DELETE** | `/prescriptions/{id}`  | Excluir uma prescrição                      |
-| **PUT**    | `/prescriptions/{id}`  | Editar uma prescrição existente             |
+| Método     | Endpoint                | Descrição                                   |
+| ---------- | ----------------------- | ------------------------------------------- |
+| **POST**   | `/auth/sign-up`         | Registrar um novo usuário                   |
+| **POST**   | `/auth/sign-in`         | Fazer login e obter o token de autenticação |
+| **GET**    | `/auth/profile`         | Obter o perfil do usuário autenticado       |
+| **PUT**    | `/auth/update-password` | Alterar a senha do usuário                  |
+| **DELETE** | `/auth/delete-account`  | Excluir a própria conta                     |
+| **GET**    | `/prescriptions`        | Obter todas as prescrições                  |
+| **POST**   | `/prescriptions`        | Criar uma nova prescrição                   |
+| **DELETE** | `/prescriptions/{id}`   | Excluir uma prescrição                      |
+| **PUT**    | `/prescriptions/{id}`   | Editar uma prescrição existente             |
 
 ## Instalação
 
