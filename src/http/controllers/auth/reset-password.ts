@@ -7,7 +7,7 @@ import {
 	defaultErrorResponseSchema,
 	defaultSuccessResponseSchema,
 } from "../../schemas/response";
-import { auth } from "http/middlewares/auth.js";
+import { auth } from "../../middlewares/auth.js";
 
 const resetPasswordRequestBodySchema = z
 	.object({
