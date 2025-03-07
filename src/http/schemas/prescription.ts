@@ -9,7 +9,7 @@ export const prescriptionSchema = z.object({
 	dose: z.string(),
 	via: z.string(),
 	posology: z.string(),
-	treatmentDays: z.array(z.string()),
+	treatmentDays: z.array(z.coerce.date()),
 });
 
 export const getPrescriptionsResponseBodySchema = z.object({
@@ -29,8 +29,10 @@ export const prescriptionsRequestBodySchema = z.object({
 	via: z.string().min(1, "A Via de administração é obrigatória"),
 	dose: z.string().min(1, "A Dose é obrigatória"),
 	posology: z.string().min(1, "A Posologia é obrigatória"),
-	treatmentDays: z.array(z.string()).min(1, "Defina os dias de tratamento"),
+	treatmentDays: z.array(z.coerce.date()).min(1, "Defina os dias de tratamento"),
 });
+
+export type PrescriptionBody = z.infer<typeof prescriptionsRequestBodySchema>;
 
 export const getPrescriptionsQuerySchema = z.object({
 	pageIndex: z.coerce.number().int().nonnegative().optional(),

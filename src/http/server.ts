@@ -13,6 +13,7 @@ import { errorHandler } from "./error-handler";
 import { env } from "../env";
 import { authRoutes } from "./controllers/auth/auth.routes";
 import { prescriptionsRoutes } from "./controllers/prescriptions/prescriptions.routes";
+import { chartsRoutes } from "./controllers/charts/charts.routes";
 
 const port = Number(env.PORT);
 
@@ -58,6 +59,7 @@ app.register(authRoutes);
 
 // Rotas de Prescrições
 app.register(prescriptionsRoutes);
+app.register(chartsRoutes);
 
 try {
 	app.listen({ port, host: "0.0.0.0" });

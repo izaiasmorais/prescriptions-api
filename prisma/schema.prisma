@@ -17,15 +17,15 @@ model User {
 }
 
 model Prescription {
-  id            String   @id @default(uuid())
-  medicalRecord String   @map("medical_record")
-  patientName   String   @map("patient_name")
+  id            String     @id @default(uuid())
+  medicalRecord String     @map("medical_record")
+  patientName   String     @map("patient_name")
   medicine      String
   unit          String
   dose          String
   via           String
   posology      String
-  treatmentDays String[] @map("treatment_days")
+  treatmentDays DateTime[] @map("treatment_days")
 
   @@map("prescriptions")
 }

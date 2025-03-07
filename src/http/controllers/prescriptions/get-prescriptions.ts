@@ -107,7 +107,7 @@ export async function getPrescriptions(app: FastifyInstance) {
 					success: true,
 					error: null,
 					data: {
-						prescriptions,
+						prescriptions: prescriptions,
 						meta: {
 							pageIndex: page,
 							perPage: itemsPerPage,

@@ -11,6 +11,9 @@
 		"studio": "pnpm prisma studio -b chrome -p 5174",
 		"build": "tsc"
 	},
+	"prisma": {
+		"seed": "tsx prisma/seed.ts"
+	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
