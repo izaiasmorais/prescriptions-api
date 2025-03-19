@@ -1,6 +1,8 @@
 import type { FastifyInstance } from "fastify";
-import { getDotChart } from "./get-dot";
+import { getDot } from "./get-dot";
+import { getLot } from "./get-lot";
 
 export async function chartsRoutes(app: FastifyInstance) {
-	app.register(getDotChart);
+	app.register(getDot);
+	app.register(getLot);
 }

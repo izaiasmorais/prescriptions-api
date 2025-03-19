@@ -8,32 +8,32 @@ import {
 	defaultSuccessResponseSchema,
 } from "../../schemas/response";
 
-const getDotChartRequestQuerySchema = z.object({
+const getLotChartRequestQuerySchema = z.object({
 	unit: z.string(),
 	startDate: z.coerce.date(),
 	endDate: z.coerce.date(),
 });
 
-const getDotChartResponseBodySchema = z.object({
-	dot: z.number(),
+const getLotChartResponseBodySchema = z.object({
+	lot: z.number(),
 });
 
-export async function getDot(app: FastifyInstance) {
+export async function getLot(app: FastifyInstance) {
 	app
 		.withTypeProvider<ZodTypeProvider>()
 		.register(auth)
 		.get(
-			"/charts/dot",
+			"/charts/lot",
 			{
 				onRequest: [verifyJwt],
 				schema: {
 					tags: ["charts"],
-					summary: "Get DOT chart",
+					summary: "Get LOT chart",
 					security: [{ bearerAuth: [] }],
-					querystring: getDotChartRequestQuerySchema,
+					querystring: getLotChartRequestQuerySchema,
 					response: {
 						200: defaultSuccessResponseSchema(
-							getDotChartResponseBodySchema
+							getLotChartResponseBodySchema
 						).describe("OK"),
 						400: defaultErrorResponseSchema.describe("Bad Request"),
 						401: defaultErrorResponseSchema.describe("Unauthorized"),
@@ -52,26 +52,31 @@ export async function getDot(app: FastifyInstance) {
 					},
 				});
 
-				const groupedPrescriptions = prescriptions.reduce<
-					Record<string, Set<string>>
-				>((acc, prescription) => {
-					if (!acc[prescription.medicine]) {
-						acc[prescription.medicine] = new Set();
-					}
-
-					prescription.treatmentDays.forEach((date) => {
-						const treatmentDate = new Date(date);
-						if (treatmentDate >= start && treatmentDate <= end) {
-							acc[prescription.medicine].add(
-								treatmentDate.toISOString().split("T")[0] + "T00:00:00.000Z"
-							);
+				const patientPrescriptions: Record<
+					string,
+					Set<string>
+				> = prescriptions.reduce(
+					(acc: Record<string, Set<string>>, prescription) => {
+						const patientId = prescription.patientName;
+						if (!acc[patientId]) {
+							acc[patientId] = new Set();
 						}
-					});
 
-					return acc;
-				}, {});
+						prescription.treatmentDays.forEach((date) => {
+							const treatmentDate = new Date(date);
+							if (treatmentDate >= start && treatmentDate <= end) {
+								acc[patientId].add(
+									treatmentDate.toISOString().split("T")[0] + "T00:00:00.000Z"
+								);
+							}
+						});
 
-				const dot = Object.values(groupedPrescriptions).reduce(
+						return acc;
+					},
+					{}
+				);
+
+				const totalLotDays = Object.values(patientPrescriptions).reduce(
 					(total, dates) => total + dates.size,
 					0
 				);
@@ -83,15 +88,17 @@ export async function getDot(app: FastifyInstance) {
 					prescriptions.map((prescription) => prescription.patientName)
 				).size;
 
-				const finalDot =
-					uniquePatients > 0 ? (dot / (totalDays * uniquePatients)) * 100 : 0;
+				const finalLot =
+					uniquePatients > 0
+						? (totalLotDays / (totalDays * uniquePatients)) * 100
+						: 0;
 
-				const dotFormatted = finalDot.toFixed(3);
+				const lotFormatted = finalLot.toFixed(3);
 
 				return reply.status(200).send({
 					success: true,
 					error: null,
-					data: { dot: Number(dotFormatted) },
+					data: { lot: Number(lotFormatted) },
 				});
 			}
 		);

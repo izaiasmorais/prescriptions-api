@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { prisma } from "../../../libs/prisma.js";
-import { auth } from "../../middlewares/auth.js";
+import { auth, verifyJwt } from "../../middlewares/auth.js";
 import z from "zod";
 import {
 	defaultErrorResponseSchema,
@@ -15,6 +15,7 @@ export async function deleteAccount(app: FastifyInstance) {
 		.delete(
 			"/auth/delete-account",
 			{
+				onRequest: [verifyJwt],
 				schema: {
 					tags: ["auth"],
 					summary: "Delete your own account",

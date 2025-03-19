@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { prisma } from "../../../libs/prisma.js";
-import { auth } from "../../middlewares/auth";
+import { auth, verifyJwt } from "../../middlewares/auth";
 import {
 	defaultErrorResponseSchema,
 	defaultSuccessResponseSchema,
@@ -16,6 +16,7 @@ export async function createPrescription(app: FastifyInstance) {
 		.post(
 			"/prescriptions",
 			{
+				onRequest: [verifyJwt],
 				schema: {
 					tags: ["prescriptions"],
 					summary: "Create a new prescription",

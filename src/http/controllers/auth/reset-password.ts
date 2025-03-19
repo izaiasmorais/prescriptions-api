@@ -7,7 +7,7 @@ import {
 	defaultErrorResponseSchema,
 	defaultSuccessResponseSchema,
 } from "../../schemas/response";
-import { auth } from "../../middlewares/auth.js";
+import { auth, verifyJwt } from "../../middlewares/auth.js";
 
 const resetPasswordRequestBodySchema = z
 	.object({
@@ -29,6 +29,7 @@ export async function resetPassword(app: FastifyInstance) {
 		.put(
 			"/auth/reset-password",
 			{
+				onRequest: [verifyJwt],
 				schema: {
 					tags: ["auth"],
 					summary: "Alterar senha do usuário autenticado",

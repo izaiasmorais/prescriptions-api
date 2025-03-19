@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { prisma } from "../../../libs/prisma.js";
-import { auth } from "../../middlewares/auth.js";
+import { auth, verifyJwt } from "../../middlewares/auth.js";
 import {
 	defaultErrorResponseSchema,
 	defaultSuccessResponseSchema,
@@ -18,6 +18,7 @@ export async function getPrescriptions(app: FastifyInstance) {
 		.get(
 			"/prescriptions",
 			{
+				onRequest: [verifyJwt],
 				schema: {
 					tags: ["prescriptions"],
 					summary: "Get paginated prescriptions",
@@ -29,9 +30,6 @@ export async function getPrescriptions(app: FastifyInstance) {
 						).describe("OK"),
 						401: defaultErrorResponseSchema.describe("Unauthorized"),
 					},
-				},
-				preHandler: async (request) => {
-					await request.getCurrentUserId();
 				},
 			},
 			async (request, reply) => {

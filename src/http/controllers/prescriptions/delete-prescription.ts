@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { prisma } from "../../../libs/prisma";
-import { auth } from "../../middlewares/auth";
+import { auth, verifyJwt } from "../../middlewares/auth";
 import z from "zod";
 import {
 	defaultErrorResponseSchema,
@@ -19,6 +19,7 @@ export async function deletePrescription(app: FastifyInstance) {
 		.delete(
 			"/prescriptions/:id",
 			{
+				onRequest: [verifyJwt],
 				schema: {
 					tags: ["prescriptions"],
 					summary: "Delete a prescription",
