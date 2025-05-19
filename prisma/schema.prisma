@@ -8,11 +8,18 @@ datasource db {
 }
 
 model User {
-  id       String @id @default(uuid())
-  name     String
-  email    String @unique
-  password String
+  id        String  @id @default(uuid())
+  name      String
+  email     String  @unique
+  password  String
+  avatarUrl String? @map("avatar_url")
 
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  prescriptions Prescription[]
+
+  @@index([email])
   @@map("users")
 }
 
@@ -27,5 +34,29 @@ model Prescription {
   posology      String
   treatmentDays DateTime[] @map("treatment_days")
 
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([patientName])
+  @@index([medicine])
+  @@index([medicalRecord])
   @@map("prescriptions")
+}
+
+model Medicine {
+  id           String    @id @default(uuid())
+  name         String
+  dose         String
+  via          String
+  posology     String
+  standardDose Decimal
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime? @updatedAt @map("updated_at")
+
+  @@index([name])
+  @@map("medicines")
 }

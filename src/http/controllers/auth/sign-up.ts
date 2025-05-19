@@ -4,15 +4,10 @@ import { prisma } from "../../../libs/prisma.js";
 import bcrypt from "bcrypt";
 import z from "zod";
 import {
-	defaultErrorResponseSchema,
-	defaultSuccessResponseSchema,
-} from "../../schemas/response";
-
-const signUpRequestBodySchema = z.object({
-	name: z.string().min(5, "Name is required"),
-	email: z.string().email("Invalid email"),
-	password: z.string().min(6, "Password must contain at least 6 characters"),
-});
+	errorResponseSchema,
+	successResponseSchema,
+} from "../../schemas/http.js";
+import { signUpRequestSchema } from "http/schemas/auth.js";
 
 export async function signUp(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().post(
@@ -20,12 +15,13 @@ export async function signUp(app: FastifyInstance) {
 		{
 			schema: {
 				tags: ["auth"],
-				summary: "Register a new user",
-				body: signUpRequestBodySchema,
+				operationId: "signUp",
+				summary: "Cadastrar um novo usuário",
+				body: signUpRequestSchema,
 				response: {
-					201: defaultSuccessResponseSchema(z.null()).describe("Created"),
-					400: defaultErrorResponseSchema.describe("Bad Request"),
-					409: defaultErrorResponseSchema.describe("Conflict"),
+					201: successResponseSchema(z.null()).describe("Created"),
+					400: errorResponseSchema.describe("Bad Request"),
+					409: errorResponseSchema.describe("Conflict"),
 				},
 			},
 		},
@@ -39,12 +35,12 @@ export async function signUp(app: FastifyInstance) {
 			if (emailAlreadyExists) {
 				return reply.status(409).send({
 					success: false,
-					error: "Usuário já cadastrado",
+					errors: ["Usuário já cadastrado"],
 					data: null,
 				});
 			}
 
-			const hashedPassword = await bcrypt.hash(password, 10);
+			const hashedPassword = await bcrypt.hash(password, 6);
 
 			await prisma.user.create({
 				data: {
@@ -56,7 +52,7 @@ export async function signUp(app: FastifyInstance) {
 
 			return reply.status(201).send({
 				success: true,
-				error: null,
+				errors: null,
 				data: null,
 			});
 		}

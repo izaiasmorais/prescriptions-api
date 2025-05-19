@@ -1,50 +1,45 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { prisma } from "../../../libs/prisma";
-import { auth, verifyJwt } from "../../middlewares/auth";
-import z from "zod";
-import {
-	defaultErrorResponseSchema,
-	defaultSuccessResponseSchema,
-} from "../../schemas/response";
+import { verifyJwt } from "../../middlewares/auth";
+import { errorResponseSchema, successResponseSchema } from "../../schemas/http";
 
-const deletePrescriptionsParamsSchema = z.object({
-	id: z.string().uuid(),
-});
+import z from "zod";
 
 export async function deletePrescription(app: FastifyInstance) {
 	app
 		.withTypeProvider<ZodTypeProvider>()
-		.register(auth)
+
 		.delete(
 			"/prescriptions/:id",
 			{
 				onRequest: [verifyJwt],
 				schema: {
 					tags: ["prescriptions"],
-					summary: "Delete a prescription",
+					operationId: "deletePrescription",
+					summary: "Deletar uma prescrição",
 					security: [{ bearerAuth: [] }],
-					params: deletePrescriptionsParamsSchema,
+					params: z.object({
+						id: z.string().uuid(),
+					}),
 					response: {
-						204: defaultSuccessResponseSchema(z.null()).describe("No Content"),
-						401: defaultErrorResponseSchema.describe("Unauthorized"),
-						404: defaultErrorResponseSchema.describe("Prescription not found"),
+						204: successResponseSchema(z.null()).describe("No Content"),
+						401: errorResponseSchema.describe("Unauthorized"),
+						404: errorResponseSchema.describe("Prescription not found"),
 					},
 				},
 			},
 			async (request, reply) => {
-				await request.getCurrentUserId();
-
 				const { id } = request.params;
 
 				const prescription = await prisma.prescription.findUnique({
-					where: { id },
+					where: { id, userId: request.user.sub },
 				});
 
 				if (!prescription) {
 					return reply.status(404).send({
 						success: false,
-						error: "Prescrição não encontrada",
+						errors: ["Prescrição não encontrada"],
 						data: null,
 					});
 				}
@@ -55,7 +50,7 @@ export async function deletePrescription(app: FastifyInstance) {
 
 				return reply.status(204).send({
 					success: true,
-					error: null,
+					errors: null,
 					data: null,
 				});
 			}

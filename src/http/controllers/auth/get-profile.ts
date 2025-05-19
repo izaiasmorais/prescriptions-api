@@ -1,65 +1,57 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { prisma } from "../../../libs/prisma.js";
-import { auth, verifyJwt } from "../../middlewares/auth.js";
-import { z } from "zod";
+import { verifyJwt } from "../../middlewares/auth.js";
 import {
-	defaultSuccessResponseSchema,
-	defaultErrorResponseSchema,
-} from "../../schemas/response";
-
-const userSchema = z.object({
-	id: z.string(),
-	name: z.string(),
-	email: z.string().email(),
-});
+	errorResponseSchema,
+	successResponseSchema,
+} from "http/schemas/http.js";
+import { getProfileResponseSchema } from "http/schemas/auth.js";
 
 export async function getProfile(app: FastifyInstance) {
-	app
-		.withTypeProvider<ZodTypeProvider>()
-		.register(auth)
-		.get(
-			`/auth/profile`,
-			{
-				onRequest: [verifyJwt],
-				schema: {
-					tags: ["auth"],
-					summary: "Get authenticated user profile",
-					security: [{ bearerAuth: [] }],
-					response: {
-						200: defaultSuccessResponseSchema(userSchema),
-						401: defaultErrorResponseSchema.describe("Unauthorized"),
-						404: defaultErrorResponseSchema.describe("Not Found"),
-					},
+	app.withTypeProvider<ZodTypeProvider>().get(
+		"/auth/profile",
+		{
+			onRequest: [verifyJwt],
+			schema: {
+				tags: ["auth"],
+				operationId: "getProfile",
+				summary: "Obter perfil do usuário autenticado",
+				security: [{ bearerAuth: [] }],
+				response: {
+					200: successResponseSchema(getProfileResponseSchema),
+					401: errorResponseSchema.describe("Unauthorized"),
+					404: errorResponseSchema.describe("Not Found"),
 				},
 			},
-			async (request, reply) => {
-				const userId = await request.getCurrentUserId();
+		},
+		async (request, reply) => {
+			const userId = request.user.sub;
 
-				const user = await prisma.user.findUnique({
-					select: {
-						id: true,
-						email: true,
-						name: true,
-					},
-					where: {
-						id: userId,
-					},
-				});
+			const user = await prisma.user.findUnique({
+				where: {
+					id: userId,
+				},
+				select: {
+					id: true,
+					email: true,
+					name: true,
+				},
+			});
 
-				if (!user) {
-					return reply.status(404).send({
-						success: false,
-						error: "Usuário não encontrado",
-						data: null,
-					});
-				}
-
-				return reply.send({
-					success: true,
-					error: null,
-					data: user,
+			if (!user) {
+				return reply.status(404).send({
+					success: false,
+					errors: ["Usuário não encontrado"],
+					data: null,
 				});
 			}
-		);
+
+			return reply.status(200).send({
+				success: true,
+				errors: null,
+				data: user,
+			});
+		}
+	);
 }

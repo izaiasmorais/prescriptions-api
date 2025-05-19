@@ -1,48 +1,52 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { prisma } from "../../../libs/prisma.js";
-import { auth, verifyJwt } from "../../middlewares/auth";
+import { verifyJwt } from "../../middlewares/auth";
+import { prescriptionRequestSchema } from "../../schemas/prescription";
+import { getCurrentDate } from "../../../utils/get-current-date.js";
 import {
-	defaultErrorResponseSchema,
-	defaultSuccessResponseSchema,
-} from "../../schemas/response";
-import { prescriptionsRequestBodySchema } from "../../schemas/prescription";
+	errorResponseSchema,
+	successResponseSchema,
+} from "../../schemas/http.js";
+
 import z from "zod";
 
 export async function createPrescription(app: FastifyInstance) {
 	app
 		.withTypeProvider<ZodTypeProvider>()
-		.register(auth)
+
 		.post(
 			"/prescriptions",
 			{
 				onRequest: [verifyJwt],
 				schema: {
 					tags: ["prescriptions"],
-					summary: "Create a new prescription",
+					operationId: "createPrescription",
+					summary: "Criar uma nova prescrição",
 					security: [{ bearerAuth: [] }],
-					body: prescriptionsRequestBodySchema,
+					body: prescriptionRequestSchema,
 					response: {
-						201: defaultSuccessResponseSchema(z.null()).describe("Created"),
-						400: defaultErrorResponseSchema.describe("Bad Request"),
-						401: defaultErrorResponseSchema.describe("Unauthorized"),
+						201: successResponseSchema(z.null()).describe("Created"),
+						400: errorResponseSchema.describe("Bad Request"),
+						401: errorResponseSchema.describe("Unauthorized"),
 					},
 				},
 			},
 			async (request, reply) => {
-				await request.getCurrentUserId();
-
-				const body = prescriptionsRequestBodySchema.parse(request.body);
+				const body = prescriptionRequestSchema.parse(request.body);
 
 				await prisma.prescription.create({
 					data: {
 						...body,
+						userId: request.user.sub,
+						createdAt: getCurrentDate(),
+						updatedAt: null,
 					},
 				});
 
 				return reply.status(201).send({
 					success: true,
-					error: null,
+					errors: null,
 					data: null,
 				});
 			}

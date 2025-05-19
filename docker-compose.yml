@@ -1,0 +1,10 @@
+services:
+  prescriptions-api-postgres:
+    container_name: prescriptions-api-postgres
+    image: bitnami/postgresql
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_USER: prescriptions
+      POSTGRES_PASSWORD: prescriptions
+      POSTGRES_DB: docker

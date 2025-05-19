@@ -59,7 +59,4 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 data
 
 # Prisma
-prisma/seed.ts
-prisma/data.ts
-src/seed.ts
-src/data.ts
+prisma/seed

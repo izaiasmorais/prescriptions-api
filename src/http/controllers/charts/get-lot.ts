@@ -1,42 +1,34 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { prisma } from "../../../libs/prisma.js";
-import { auth, verifyJwt } from "../../middlewares/auth.js";
-import { z } from "zod";
+import { verifyJwt } from "../../middlewares/auth.js";
+import { getLotChartRequestQuerySchema } from "http/schemas/charts.js";
+import { getLotChartResponseSchema } from "http/schemas/charts.js";
 import {
-	defaultErrorResponseSchema,
-	defaultSuccessResponseSchema,
-} from "../../schemas/response";
-
-const getLotChartRequestQuerySchema = z.object({
-	unit: z.string(),
-	startDate: z.coerce.date(),
-	endDate: z.coerce.date(),
-});
-
-const getLotChartResponseBodySchema = z.object({
-	lot: z.number(),
-});
+	errorResponseSchema,
+	successResponseSchema,
+} from "../../schemas/http.js";
 
 export async function getLot(app: FastifyInstance) {
 	app
 		.withTypeProvider<ZodTypeProvider>()
-		.register(auth)
+
 		.get(
 			"/charts/lot",
 			{
 				onRequest: [verifyJwt],
 				schema: {
 					tags: ["charts"],
-					summary: "Get LOT chart",
+					operationId: "getLotChart",
+					summary: "Obtém o gráfico de LOT",
 					security: [{ bearerAuth: [] }],
 					querystring: getLotChartRequestQuerySchema,
 					response: {
-						200: defaultSuccessResponseSchema(
-							getLotChartResponseBodySchema
-						).describe("OK"),
-						400: defaultErrorResponseSchema.describe("Bad Request"),
-						401: defaultErrorResponseSchema.describe("Unauthorized"),
+						200: successResponseSchema(getLotChartResponseSchema).describe(
+							"OK"
+						),
+						400: errorResponseSchema.describe("Bad Request"),
+						401: errorResponseSchema.describe("Unauthorized"),
 					},
 				},
 			},
@@ -97,7 +89,7 @@ export async function getLot(app: FastifyInstance) {
 
 				return reply.status(200).send({
 					success: true,
-					error: null,
+					errors: null,
 					data: { lot: Number(lotFormatted) },
 				});
 			}

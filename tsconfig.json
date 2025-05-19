@@ -14,5 +14,12 @@
 		"forceConsistentCasingInFileNames": true,
 		"skipLibCheck": true,
 		"strict": true
-	}
+	},
+	"exclude": [
+		"node_modules",
+		"dist",
+		"prisma/migrations",
+		"prisma/seed",
+		"**/*.js"
+	]
 }
