@@ -4,7 +4,6 @@ import { prisma } from "../../../libs/prisma.js";
 import { signInResponseSchema } from "../../schemas/auth";
 import { signInRequestSchema } from "../../schemas/auth";
 import { errorResponseSchema, successResponseSchema } from "../../schemas/http";
-
 import bcrypt from "bcrypt";
 
 export async function signIn(app: FastifyInstance) {
