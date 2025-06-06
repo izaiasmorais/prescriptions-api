@@ -5,8 +5,8 @@ import { verifyJwt } from "../../middlewares/auth.js";
 import {
 	errorResponseSchema,
 	successResponseSchema,
-} from "http/schemas/http.js";
-import { getProfileResponseSchema } from "http/schemas/auth.js";
+} from "../../schemas/http";
+import { getProfileResponseSchema } from "../../schemas/auth";
 
 export async function getProfile(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().get(

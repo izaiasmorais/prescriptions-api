@@ -1,12 +1,9 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { prisma } from "../../../libs/prisma.js";
-import { signInResponseSchema } from "http/schemas/auth.js";
-import { signInRequestSchema } from "http/schemas/auth.js";
-import {
-	errorResponseSchema,
-	successResponseSchema,
-} from "../../schemas/http.js";
+import { signInResponseSchema } from "../../schemas/auth";
+import { signInRequestSchema } from "../../schemas/auth";
+import { errorResponseSchema, successResponseSchema } from "../../schemas/http";
 
 import bcrypt from "bcrypt";
 

@@ -1,15 +1,12 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import { prisma } from "../../../libs/prisma.js";
-import { verifyJwt } from "../../middlewares/auth.js";
-import {
-	errorResponseSchema,
-	successResponseSchema,
-} from "../../schemas/http.js";
+import { prisma } from "../../../libs/prisma";
+import { verifyJwt } from "../../middlewares/auth";
+import { errorResponseSchema, successResponseSchema } from "../../schemas/http";
 import {
 	getDotChartRequestQuerySchema,
 	getDotChartResponseSchema,
-} from "http/schemas/charts.js";
+} from "../../schemas/charts";
 
 export async function getDot(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().get(

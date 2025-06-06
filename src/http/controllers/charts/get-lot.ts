@@ -1,13 +1,10 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import { prisma } from "../../../libs/prisma.js";
-import { verifyJwt } from "../../middlewares/auth.js";
-import { getLotChartRequestQuerySchema } from "http/schemas/charts.js";
-import { getLotChartResponseSchema } from "http/schemas/charts.js";
-import {
-	errorResponseSchema,
-	successResponseSchema,
-} from "../../schemas/http.js";
+import { prisma } from "../../../libs/prisma";
+import { verifyJwt } from "../../middlewares/auth";
+import { getLotChartRequestQuerySchema } from "../../schemas/charts";
+import { getLotChartResponseSchema } from "../../schemas/charts";
+import { errorResponseSchema, successResponseSchema } from "../../schemas/http";
 
 export async function getLot(app: FastifyInstance) {
 	app

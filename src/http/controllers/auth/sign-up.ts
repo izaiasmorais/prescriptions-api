@@ -3,11 +3,8 @@ import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { prisma } from "../../../libs/prisma.js";
 import bcrypt from "bcrypt";
 import z from "zod";
-import {
-	errorResponseSchema,
-	successResponseSchema,
-} from "../../schemas/http.js";
-import { signUpRequestSchema } from "http/schemas/auth.js";
+import { errorResponseSchema, successResponseSchema } from "../../schemas/http";
+import { signUpRequestSchema } from "../../schemas/auth";
 
 export async function signUp(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().post(

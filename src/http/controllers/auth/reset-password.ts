@@ -1,10 +1,10 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import { prisma } from "../../../libs/prisma.js";
-import { verifyJwt } from "../../middlewares/auth.js";
-import { resetPasswordRequestSchema } from "http/schemas/auth.js";
-import { errorResponseSchema } from "http/schemas/http.js";
-import { successResponseSchema } from "http/schemas/http.js";
+import { prisma } from "../../../libs/prisma";
+import { verifyJwt } from "../../middlewares/auth";
+import { resetPasswordRequestSchema } from "../../schemas/auth";
+import { errorResponseSchema } from "../../schemas/http";
+import { successResponseSchema } from "../../schemas/http";
 
 import bcrypt from "bcrypt";
 import z from "zod";

@@ -1,13 +1,10 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import { prisma } from "../../../libs/prisma.js";
-import { verifyJwt } from "../../middlewares/auth.js";
+import { prisma } from "../../../libs/prisma";
+import { verifyJwt } from "../../middlewares/auth";
 import { prescriptionRequestSchema } from "../../schemas/prescription";
-import { getCurrentDate } from "utils/get-current-date.js";
-import {
-	errorResponseSchema,
-	successResponseSchema,
-} from "../../schemas/http.js";
+import { getCurrentDate } from "../../../utils/get-current-date";
+import { errorResponseSchema, successResponseSchema } from "../../schemas/http";
 
 import z from "zod";
 

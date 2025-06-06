@@ -1,25 +1,22 @@
 {
 	"compilerOptions": {
+		"module": "commonjs",
+		"declaration": true,
+		"removeComments": true,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"allowSyntheticDefaultImports": true,
 		"target": "es2020",
-		"module": "CommonJS",
-		"baseUrl": "./src",
-		"paths": {
-			"*": ["*"]
-		},
+		"sourceMap": true,
 		"outDir": "./dist",
-		"rootDir": "./src",
-		"moduleResolution": "node",
-		"esModuleInterop": true,
-		"resolveJsonModule": true,
-		"forceConsistentCasingInFileNames": true,
+		"incremental": true,
 		"skipLibCheck": true,
-		"strict": true
+		"strict": true,
+		"strictNullChecks": true,
+		"noImplicitAny": false,
+		"strictBindCallApply": false,
+		"forceConsistentCasingInFileNames": false,
+		"noFallthroughCasesInSwitch": false
 	},
-	"exclude": [
-		"node_modules",
-		"dist",
-		"prisma/migrations",
-		"prisma/seed",
-		"**/*.js"
-	]
+	"exclude": ["node_modules", "dist", "prisma/migrations", "**/*.js"]
 }
