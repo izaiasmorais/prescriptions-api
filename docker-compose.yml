@@ -5,6 +5,6 @@ services:
     ports:
       - 5433:5432
     environment:
-      POSTGRES_USER: prescriptions
-      POSTGRES_PASSWORD: prescriptions
-      POSTGRES_DB: docker
+      POSTGRES_USER: monitora-atb
+      POSTGRES_PASSWORD: monitora-atb
+      POSTGRES_DB: monitora-atb-db
